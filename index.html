@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=AWIVsh3l4KH4sB-rZhGmwuTjkeVhCzqdP6i7Gj6tp8OtUlA_3ckvURVeovZzCB43wiRcA9mI7tbEYYA0&currency=USD&locale=en_US"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD&locale=en_US"></script>
     <style>
         :root { --bg: #030308; --c1: rgba(99, 102, 241, 0.25); --c2: rgba(236, 72, 153, 0.2); --gold: #E5C38B; }
         body { background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; }
@@ -48,6 +48,14 @@
             input { font-size: 1.2rem !important; }
             .btn-luxury { px: 12 !important; py: 4 !important; }
         }
+
+        /* 2줄 미리보기 효과 */
+        .report-summary-teaser { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; position: relative; }
+        .report-summary-teaser::after { content: ""; position: absolute; bottom: 0; right: 0; width: 60px; height: 24px; background: linear-gradient(to right, transparent, var(--bg)); pointer-events: none; }
+
+        /* 결제 성공 후 페이드인 애니메이션 */
+        .report-summary-full-fade { opacity: 0; visibility: hidden; transition: opacity 1s ease-in-out, visibility 1s ease-in-out; }
+        .report-summary-full-fade.show { opacity: 1; visibility: visible; }
     </style>
 </head>
 <body>
@@ -89,13 +97,17 @@
         <div class="flex flex-row step-4-layout items-center justify-between w-full max-w-7xl mx-auto gap-16">
             <div>
                 <span id="analyzing-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase hidden">ANALYZING...</span>
-                <h2 id="final-keywords" class="serif text-8xl md:text-[6rem] italic keyword-giant">VOID<br>VELVET<br>ECHO</h2>
-                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-10 py-4 mt-16 opacity-0 pointer-events-none hidden transition-all duration-1000Unlocked">Share Your Artifact</button>
+                <h2 id="final-keywords" class="serif text-6xl md:text-[6rem] italic keyword-giant">VOID<br>VELVET<br>ECHO</h2>
+                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-10 py-4 mt-16 opacity-0 pointer-events-none transition-all duration-1000">Share Your Artifact</button>
             </div>
-            <div id="report-card-container" class="glass p-12 relative overflow-hidden h-[600px] flex flex-col rounded-sm">
-                <div id="report-content" class="blur-report space-y-12">
+            <div id="report-card-container" class="glass p-12 relative overflow-hidden h-[450px] md:h-[600px] flex flex-col rounded-sm">
+                <div id="report-content" class="space-y-12">
                     <h3 id="report-title" class="serif text-4xl italic">Dossier: Pending</h3>
-                    <p id="report-summary" class="text-[10px] leading-loose opacity-60">The architecture of your sequence...</p>
+                    
+                    <p id="report-summary-teaser" class="report-summary-teaser text-[10px] leading-loose text-white/80 opacity-90 relative"></p>
+                    
+                    <p id="report-summary-full" class="report-summary-full-fade text-[10px] leading-loose opacity-60"></p>
+                    
                     <div class="h-40 bg-white/5 rounded-sm flex items-center justify-center italic text-[9px] opacity-20 tracking-widest uppercase">Generative Artifact Pending</div>
                 </div>
                 <div id="payment-overlay" class="payment-overlay absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-xl p-12 text-center">
@@ -109,7 +121,7 @@
     <div id="artifact-card-hidden-container">
         <div id="artifact-card-to-capture" class="artifact-card-luxury text-center">
             <div class="space-y-6">
-                <span id="card-rarity" class="text-[20px] tracking-[0.8em] text-indigo-400 font-bold uppercase serif">RARITY: Legendary (0.1%)</span>
+                <span id="card-rarity" class="text-[20px] tracking-[0.8em] text-indigo-400 font-bold uppercase serif">RARITY: 0.1%</span>
                 <h1 id="card-keywords" class="serif text-[130px] italic keyword-giant">VOID<br>VELVET<br>ECHO</h1>
             </div>
             <div class="space-y-6">
@@ -125,8 +137,6 @@
         let currentStep = 0; let userAnswers = [];
         function nextStep(n) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); setTimeout(() => { const target = document.getElementById('step-' + n); if(target) target.classList.add('active'); }, 100); }
         function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 12 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 12 ? "auto" : "none"; }
-        
-        // 🛠️ 보강된 질문 처리 로직
         async function handleQuestion() {
             const input = document.getElementById('answer-input'); userAnswers.push(input.value); currentStep++;
             if(currentStep < questions.length) {
@@ -137,17 +147,18 @@
                 try {
                     const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: userAnswers }) });
                     const data = await res.json();
-                    
-                    // 🔓 데이터 입히기
                     document.getElementById('final-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
-                    document.getElementById('rarity-text').innerText = `RARITY: ${data.rarity} - COSMIC SYMBOLISM`;
+                    document.getElementById('rarity-text').innerText = `RARITY: ${data.rarity}`;
                     document.getElementById('report-title').innerText = `Dossier: ${data.report.title}`;
-                    document.getElementById('report-summary').innerText = data.report.summary;
+                    
+                    // 미리보기 및 전체 텍스트 설정
+                    document.getElementById('report-summary-teaser').innerText = data.report.summary;
+                    document.getElementById('report-summary-full').innerText = data.report.summary;
+
                     document.getElementById('card-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
                     document.getElementById('card-rarity').innerText = `RARITY: ${data.rarity}`;
                     document.getElementById('card-title').innerText = data.report.title;
                     
-                    // 🚨 [신규] 로딩 텍스트 숨기기
                     document.getElementById('analyzing-text').classList.add('hidden');
                     
                     setTimeout(() => nextStep(4), 2000);
@@ -155,24 +166,18 @@
             }
         }
 
-        // 🔓 [신규] 결제 성공 축하 연출 및 리포트 잠금 해제
+        // 결제 성공 시 연출 및 페이드인 애니메이션
         function unlockSubconsciousArtifact() {
-            // 사운드 재생
             const sound = document.getElementById('success-sound'); if(sound) sound.play().catch(e => {});
-            
-            // 성공 축하 오버레이 띄우기
             const overlay = document.getElementById('payment-success-overlay'); overlay.classList.add('active');
-            
-            // 이미지 저장 버튼 활성화 및 표시
-            const saveBtn = document.getElementById('save-card-btn');
-            saveBtn.classList.remove('hidden'); // hidden 해제
-            saveBtn.classList.add('opacity-1'); saveBtn.classList.add('pointer-events-auto'); // opacity-1 및 클릭 활성화
-            
-            // 3초 후 오버레이 끄고 결과 리포트 블러 제거 (여기에 페이드인 효과 발생!)
+            document.getElementById('save-card-btn').style.opacity = "1"; document.getElementById('save-card-btn').style.pointerEvents = "auto";
             setTimeout(() => {
                 overlay.classList.remove('active');
                 document.getElementById('payment-overlay').classList.add('hidden');
-                document.getElementById('report-content').classList.add('unlocked');
+                
+                // 미리보기 숨기고 전체 텍스트 페이드인
+                document.getElementById('report-summary-teaser').classList.add('hidden');
+                document.getElementById('report-summary-full').classList.add('show');
             }, 3500);
         }
 
