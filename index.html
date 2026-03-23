@@ -3,147 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMNANT | The Subconscious Studio</title>
-    
+    <title>REMNANT | Premium Subconscious Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
-    
     <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD&locale=en_US"></script>
-    
     <style>
-        :root { 
-            --bg: #020205; 
-            --aurora-1: rgba(67, 56, 202, 0.12); /* Initial Indigo */
-            --aurora-2: rgba(124, 58, 237, 0.1);  /* Initial Violet */
-        }
+        :root { --bg: #020205; --aurora-1: rgba(67, 56, 202, 0.12); --aurora-2: rgba(124, 58, 237, 0.1); }
         body { background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; }
         .serif { font-family: 'Cormorant Garamond', serif; }
         
-        /* 🌌 Grainy Noise Overlay */
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://grainy-gradients.vercel.app/noise.svg');
-            opacity: 0.05; pointer-events: none; z-index: 100;
-        }
-
-        /* 💜 Interactive Aurora Animation */
-        .aurora {
-            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1;
-            background: radial-gradient(circle at 30% 40%, var(--aurora-1) 0%, transparent 40%),
-                        radial-gradient(circle at 70% 60%, var(--aurora-2) 0%, transparent 40%);
-            filter: blur(100px); transition: all 3s ease-in-out;
-            animation: drift 60s infinite linear;
-        }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://grainy-gradients.vercel.app/noise.svg'); opacity: 0.05; pointer-events: none; z-index: 100; }
+        .aurora { position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1; background: radial-gradient(circle at 30% 40%, var(--aurora-1) 0%, transparent 40%), radial-gradient(circle at 70% 60%, var(--aurora-2) 0%, transparent 40%); filter: blur(100px); transition: all 3s ease; animation: drift 60s infinite linear; }
         @keyframes drift { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* UI Styling */
         .glass { background: rgba(255, 255, 255, 0.015); backdrop-filter: blur(50px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .btn-luxury { background: #ffffff; color: #000; letter-spacing: 0.4em; font-size: 0.65rem; font-weight: 500; text-transform: uppercase; transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); cursor: pointer; }
         .btn-luxury:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3); }
 
-        /* Step Transitions */
         .step { display: none; opacity: 0; }
         .step.active { display: flex; animation: fadeIn 2.5s forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Narrative Sequence Animation */
-        .fade-sequence { opacity: 0; animation: fadeSequence 4s forwards; }
-        @keyframes fadeSequence { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Climax Elements */
-        .blur-report { filter: blur(18px); pointer-events: none; user-select: none; transition: filter 2s ease; }
+        .blur-report { filter: blur(18px); pointer-events: none; }
         .keyword-giant { line-height: 0.8; letter-spacing: -0.05em; animation: text-glow 3s infinite alternate; }
         @keyframes text-glow { from { opacity: 0.4; } to { opacity: 1; text-shadow: 0 0 40px rgba(255,255,255,0.25); } }
-        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
     </style>
 </head>
 <body class="h-screen w-screen relative">
 
     <div class="aurora" id="aurora-bg"></div>
 
-    <nav class="fixed top-0 w-full flex justify-between items-center px-12 py-10 z-50">
-        <div class="text-2xl font-light tracking-[0.5em] serif italic">REMNANT</div>
-        <div class="text-[9px] tracking-[0.4em] opacity-30 font-light">PSYCHOANALYTIC STUDIO</div>
-    </nav>
-
     <section id="step-1" class="step active flex-col items-center justify-center h-full px-8 text-center max-w-5xl mx-auto z-10">
         <div class="space-y-16 mb-24">
-            <p class="fade-sequence serif text-xl md:text-2xl italic font-light opacity-50" style="animation-delay: 0.5s;">
-                "Dreams are the royal road to a knowledge of the unconscious."
-            </p>
-            <h2 class="fade-sequence serif text-4xl md:text-6xl italic font-light leading-tight" style="animation-delay: 2.5s;">
-                Beyond the veil of sleep lies <br> 
-                the architecture of your true self.
-            </h2>
-            <p class="fade-sequence text-[10px] tracking-[0.6em] opacity-30 uppercase" style="animation-delay: 4.5s;">
-                We invite you to reconstruct the remnants of your night.
-            </p>
+            <p class="serif text-xl md:text-2xl italic font-light opacity-50">"The dream is a little hidden door in the innermost and most secret recesses of the soul."</p>
+            <h2 class="serif text-4xl md:text-6xl italic font-light leading-tight">Every shadow in your sleep <br> holds a structural truth.</h2>
         </div>
-        <button onclick="nextStep(2)" class="fade-sequence btn-luxury px-16 py-5" style="animation-delay: 6s;">
-            Recite Your Dream
-        </button>
+        <button onclick="nextStep(2)" class="btn-luxury px-16 py-5">Recite Your Dream</button>
     </section>
 
-    <section id="step-2" class="step flex-col items-center justify-center h-full px-8 z-10 w-full max-w-2xl mx-auto text-center">
-        <span id="progress" class="text-[9px] tracking-[0.5em] opacity-30 mb-10 uppercase font-light">Inquiry 01 / 05</span>
+    <section id="step-2" class="step flex-col items-center justify-center h-full px-8 z-10 w-full max-w-3xl mx-auto text-center">
+        <span id="progress" class="text-[9px] tracking-[0.5em] opacity-30 mb-10 uppercase">Inquiry 01 / 07</span>
         <h3 id="question-text" class="serif text-4xl md:text-5xl italic mb-16 leading-relaxed">What was the dominant hue <br> of the atmosphere?</h3>
-        <input id="answer-input" type="text" placeholder=" Describe the tone..." 
-            class="bg-transparent border-b border-white/10 w-full py-4 text-xl font-extralight italic text-center focus:outline-none focus:border-white transition-all duration-1000">
-        <button onclick="handleQuestion()" class="btn-luxury px-12 py-4 mt-20">Continue</button>
+        <input id="answer-input" type="text" oninput="checkLength()" placeholder="Describe the fragments..." 
+            class="bg-transparent border-b border-white/10 w-full py-4 text-xl font-extralight italic text-center focus:outline-none transition-all duration-1000">
+        <p id="length-hint" class="text-[8px] tracking-[0.3em] opacity-0 mt-4 transition-opacity duration-1000 uppercase">Deeper resonance required...</p>
+        <button id="next-btn" onclick="handleQuestion()" class="btn-luxury px-12 py-4 mt-20 opacity-20 pointer-events-none">Continue</button>
     </section>
 
     <div id="step-3" class="step flex-col items-center justify-center h-full z-10">
-        <div class="w-32 h-[0.5px] bg-white/10 relative overflow-hidden mb-10">
-            <div class="absolute inset-0 bg-white/60 -translate-x-full" style="animation: shimmer 2.5s infinite;"></div>
-        </div>
-        <p class="text-[10px] tracking-[0.6em] opacity-40 uppercase italic">Synthesizing Neural Remnants...</p>
+        <p class="text-[10px] tracking-[0.6em] opacity-40 uppercase italic animate-pulse">Computing Neural Archetypes...</p>
     </div>
 
     <section id="step-4" class="step flex-col items-center justify-center h-full w-full max-w-7xl mx-auto px-12 z-10">
         <div class="grid md:grid-cols-2 gap-24 items-center w-full">
-            
             <div class="text-left space-y-12">
                 <div class="space-y-4">
-                    <span class="text-[10px] tracking-[0.5em] opacity-30 uppercase font-medium">Core Archetypes</span>
-                    <h2 class="serif text-7xl md:text-[9.5rem] italic keyword-giant">
-                        VOID <br> <span class="opacity-30 text-6xl md:text-[8rem]">VELVET</span> <br> ECHO
-                    </h2>
+                    <span class="text-[10px] tracking-[0.5em] text-violet-400 font-medium">RARITY: 0.8% - COSMIC SYMBOLISM</span>
+                    <h2 class="serif text-7xl md:text-[9.5rem] italic keyword-giant">VOID <br> <span class="opacity-30">VELVET</span> <br> ECHO</h2>
                 </div>
             </div>
 
-            <div class="glass p-12 md:p-16 relative overflow-hidden group h-[600px] flex flex-col">
-                <div class="blur-report space-y-10 text-left overflow-hidden h-full">
+            <div class="glass p-12 md:p-16 relative overflow-hidden h-[600px] flex flex-col">
+                <div class="blur-report space-y-10 text-left opacity-30">
                     <div class="border-b border-white/10 pb-6 flex justify-between items-end">
-                        <h3 class="serif text-3xl italic">Dossier: Sequence #0822-X</h3>
-                        <span class="text-[8px] opacity-40 tracking-widest uppercase">Proprietary Algorithm</span>
+                        <h3 class="serif text-3xl italic">Dossier: #RMNT-2026-X</h3>
                     </div>
-                    
-                    <div class="space-y-4">
-                        <h4 class="text-[10px] tracking-[0.4em] text-violet-400 uppercase font-medium">I. Symbolic Mapping</h4>
-                        <p class="text-[11px] leading-loose opacity-40 font-light">The architecture of your sequence suggests a profound 'Ego-Displacement'. The recurring imagery of the Obsidian Monolith indicates a subconscious yearning for structural clarity within a fluid reality.</p>
-                    </div>
-
-                    <div class="space-y-4">
-                        <h4 class="text-[10px] tracking-[0.4em] text-violet-400 uppercase font-medium">II. Archetypal Resonance</h4>
-                        <p class="text-[11px] leading-loose opacity-40 font-light">Your interaction with the 'Void' aligns with Jung’s shadow-integration phase. This is not a space of absence, but a fertile ground for the 'Animus' to manifest new creative patterns.</p>
-                    </div>
-
-                    <div class="pt-10 border-t border-white/5">
-                        <div class="h-32 bg-white/5 rounded-sm relative flex items-center justify-center">
-                            <span class="text-[8px] opacity-20 tracking-[0.5em]">GENERATIVE VISUAL ARTIFACT...</span>
-                        </div>
-                    </div>
+                    <p class="text-[11px] leading-loose">The architecture of your sequence suggests a profound 'Ego-Displacement'. Your interaction with the 'Void' indicates a fertile ground for new creative patterns...</p>
+                    <div class="h-40 bg-white/5 rounded-sm"></div>
                 </div>
 
                 <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md p-10 text-center">
-                    <div class="mb-8 opacity-40">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    </div>
-                    <h4 class="serif text-3xl italic mb-6">Interpretation Locked</h4>
-                    <p class="text-[10px] tracking-widest opacity-60 mb-12 uppercase leading-loose font-light">Access the 12-page psychoanalytic dossier <br> and your high-resolution visual artifact.</p>
-                    
-                    <div id="paypal-button-container" class="w-full max-w-[280px] mx-auto"></div>
-                    <p class="mt-8 text-[8px] tracking-[0.4em] opacity-20 uppercase font-light tracking-[0.3em]">Unlock Your Subconscious — $1.99</p>
+                    <h4 class="serif text-3xl italic mb-6">Own Your Subconscious</h4>
+                    <p class="text-[10px] tracking-widest opacity-60 mb-12 uppercase leading-loose">Unlock the 12-page Psychoanalytic Dossier <br> & high-resolution 8K visual artifact.</p>
+                    <div id="paypal-button-container" class="w-full max-w-[280px]"></div>
+                    <p class="mt-8 text-[8px] tracking-[0.4em] opacity-20 uppercase">Secure Access — $1.99</p>
                 </div>
             </div>
         </div>
@@ -151,59 +84,70 @@
 
     <script>
         const questions = [
-            "What was the dominant hue <br> of the atmosphere?",
-            "Which emotion lingered <br> upon awakening?",
-            "Were you an observer <br> or the architect?",
-            "What singular object <br> felt most alive?",
-            "How did the sequence <br> dissolve into reality?"
+            "What was the dominant hue of the atmosphere?",
+            "Which emotion lingered upon awakening?",
+            "Were you an observer or the architect?",
+            "Was the gravity of the space heavy or absent?",
+            "What singular object felt most alive?",
+            "Did you recognize yourself in the sequence?",
+            "How did the dream dissolve into reality?"
         ];
-
-        // A: Background Color Map (Darkens and shifts as questions progress)
         const colors = [
-            { c1: 'rgba(67, 56, 202, 0.12)', c2: 'rgba(124, 58, 237, 0.1)' }, // Indigo/Violet
-            { c1: 'rgba(49, 46, 129, 0.15)', c2: 'rgba(76, 29, 149, 0.12)' }, // Deeper Blue/Purple
-            { c1: 'rgba(30, 27, 75, 0.18)', c2: 'rgba(56, 18, 114, 0.15)' },  // Deep Navy/Magenta
-            { c1: 'rgba(15, 12, 41, 0.2)', c2: 'rgba(48, 12, 48, 0.18)' },    // Midnight/Maroon
-            { c1: 'rgba(5, 5, 20, 0.25)', c2: 'rgba(20, 5, 20, 0.2)' }        // Almost Black
+            { c1: 'rgba(67, 56, 202, 0.12)', c2: 'rgba(124, 58, 237, 0.1)' },
+            { c1: 'rgba(49, 46, 129, 0.15)', c2: 'rgba(76, 29, 149, 0.12)' },
+            { c1: 'rgba(30, 27, 75, 0.18)', c2: 'rgba(56, 18, 114, 0.15)' },
+            { c1: 'rgba(20, 10, 50, 0.2)', c2: 'rgba(40, 5, 80, 0.18)' },
+            { c1: 'rgba(10, 5, 30, 0.22)', c2: 'rgba(30, 0, 40, 0.2)' },
+            { c1: 'rgba(5, 5, 20, 0.25)', c2: 'rgba(20, 0, 30, 0.22)' },
+            { c1: 'rgba(2, 2, 10, 0.3)', c2: 'rgba(10, 0, 20, 0.25)' }
         ];
 
         let currentStep = 0;
 
-        function nextStep(stepNum) {
+        function nextStep(n) {
             document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-            setTimeout(() => {
-                const target = document.getElementById(`step-${stepNum}`);
-                target.classList.add('active');
-            }, 100);
+            setTimeout(() => document.getElementById(`step-${n}`).classList.add('active'), 100);
         }
 
-        function handleQuestion() {
+        function checkLength() {
             const input = document.getElementById('answer-input').value;
-            if(!input) return;
-
-            currentStep++;
-            if(currentStep < questions.length) {
-                // Update Text
-                document.getElementById('question-text').innerHTML = questions[currentStep];
-                document.getElementById('answer-input').value = "";
-                document.getElementById('progress').innerText = `Inquiry 0${currentStep + 1} / 05`;
-                
-                // A: Update Background Colors (Interactive Aura)
-                const root = document.documentElement;
-                root.style.setProperty('--aurora-1', colors[currentStep].c1);
-                root.style.setProperty('--aurora-2', colors[currentStep].c2);
-
+            const btn = document.getElementById('next-btn');
+            const hint = document.getElementById('length-hint');
+            
+            if(input.length >= 10) { // 10자 이상일 때 버튼 활성화
+                btn.style.opacity = "1";
+                btn.style.pointerEvents = "auto";
+                hint.style.opacity = "0";
+                document.getElementById('answer-input').style.borderColor = "white";
             } else {
-                nextStep(3); // Loading
-                setTimeout(() => nextStep(4), 6000); // Result
+                btn.style.opacity = "0.2";
+                btn.style.pointerEvents = "none";
+                hint.style.opacity = "0.3";
             }
         }
 
-        // Initialize PayPal
+        function handleQuestion() {
+            currentStep++;
+            if(currentStep < questions.length) {
+                document.getElementById('question-text').innerHTML = questions[currentStep];
+                document.getElementById('answer-input').value = "";
+                document.getElementById('progress').innerText = `Inquiry 0${currentStep + 1} / 07`;
+                checkLength();
+                
+                // 배경 색상 심연으로 변경
+                const root = document.documentElement;
+                root.style.setProperty('--aurora-1', colors[currentStep].c1);
+                root.style.setProperty('--aurora-2', colors[currentStep].c2);
+            } else {
+                nextStep(3);
+                setTimeout(() => nextStep(4), 5000);
+            }
+        }
+
         paypal.Buttons({
             style: { layout: 'vertical', color: 'silver', shape: 'rect', label: 'paypal', tagline: false },
             createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { value: '1.99' } }] }),
-            onApprove: (data, actions) => actions.order.capture().then(details => alert('Dossier Unlocked'))
+            onApprove: (data, actions) => actions.order.capture().then(() => alert('Dossier Unlocked'))
         }).render('#paypal-button-container');
     </script>
 </body>
