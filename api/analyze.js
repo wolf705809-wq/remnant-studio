@@ -1,3 +1,4 @@
+// api/analyze.js (최종 디버깅 & 보강 버전)
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
   
@@ -5,28 +6,22 @@ export default async function handler(req, res) {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    return res.status(500).json({ error: "API Key가 설정되지 않았습니다." });
+    console.error("ERORR: GEMINI_API_KEY가 없습니다.");
+    return res.status(500).json({ error: "API Key missing" });
   }
 
-  // 모델명을 gemini-1.5-flash로 고정 (가장 안정적입니다)
+  // 가장 안정적인 모델 주소
   const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   const prompt = {
     contents: [{
       parts: [{
-        text: `당신은 세계 최고의 정신분석학자입니다. 다음 꿈 답변을 분석하여 오직 JSON 형식으로만 출력하세요. 
-        분석 데이터: ${answers.join(" | ")}
-        출력 형식:
-        {
-          "keywords": "키워드1 • 키워드2 • 키워드3",
-          "rarity": "0.8%",
-          "report": {
-            "title": "분석 제목",
-            "summary": "내용 요약"
-          }
-        }`
+        text: `당신은 정신분석학자입니다. 다음 꿈 답변을 분석하여 오직 JSON으로만 출력하세요. 
+        데이터: ${answers.join(" | ")}
+        출력 형식: {"keywords": "A • B • C", "rarity": "0.8%", "report": {"title": "제목", "summary": "요약"}}`
       }]
-    }]
+    }],
+    generationConfig: { response_mime_type: "application/json" }
   };
 
   try {
@@ -37,15 +32,18 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    
-    // AI의 대답 추출 및 마크다운 제거 로직 추가
+
+    // 🚨 여기서 에러를 잡습니다 (로그에 전체 내용을 찍음)
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      console.error("AI 응답 구조 이상 발생! 전체 데이터:", JSON.stringify(data));
+      return res.status(500).json({ error: "AI가 예상치 못한 대답을 보냈습니다." });
+    }
+
     let rawText = data.candidates[0].content.parts[0].text;
-    const cleanText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-    
-    const result = JSON.parse(cleanText);
-    res.status(200).json(result);
+    res.status(200).json(JSON.parse(rawText));
+
   } catch (error) {
-    console.error("Analysis Error:", error);
-    res.status(500).json({ error: "분석 실패: " + error.message });
+    console.error("서버 내부 오류:", error);
+    res.status(500).json({ error: error.message });
   }
 }
