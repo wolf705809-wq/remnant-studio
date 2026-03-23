@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REMNANT | Premium Subconscious Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #030305; --accent: #8b5cf6; }
+        body { background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .serif { font-family: 'Cormorant Garamond', serif; }
+        
+        /* 🌌 Grainy Noise Overlay */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.04; pointer-events: none; z-index: 100;
+        }
+
+        .aurora {
+            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1;
+            background: radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.12) 0%, transparent 40%);
+            filter: blur(120px); animation: drift 50s infinite linear;
+        }
+        @keyframes drift { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(50px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        .btn-premium {
+            background: #ffffff; color: #000;
+            letter-spacing: 0.3em; font-size: 0.65rem; font-weight: 500; text-transform: uppercase;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(255, 255, 255, 0.3); }
+
+        .input-minimal {
+            background: transparent; border-bottom: 0.5px solid rgba(255, 255, 255, 0.15);
+            transition: all 1s ease;
+        }
+        .input-minimal:focus { outline: none; border-color: white; padding-bottom: 1.5rem; }
+
+        /* Animation Classes */
+        .hidden-ui { display: none; opacity: 0; }
+        .fade-in { display: block; animation: fadeIn 2s forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center">
+
+    <div class="aurora"></div>
+
+    <nav class="w-full flex justify-between items-center px-12 py-10 z-10">
+        <div class="text-2xl font-light tracking-[0.5em] serif italic">REMNANT</div>
+        <div class="flex gap-12 text-[9px] tracking-[0.4em] opacity-30 font-light">
+            <a href="#" class="hover:opacity-100 transition">STUDIO</a>
+            <a href="#membership" class="hover:opacity-100 transition border-b border-white/20 pb-1 text-white opacity-80">MEMBER ACCESS</a>
+        </div>
+    </nav>
+
+    <main id="hero-section" class="w-full max-w-5xl px-8 mt-32 z-10 text-center">
+        <h1 class="serif text-6xl md:text-[8rem] leading-[0.9] italic font-light tracking-tighter mb-20">
+            Visualize the <br>
+            <span class="opacity-40">Architecture of Dreams</span>
+        </h1>
+        <div class="max-w-xl mx-auto space-y-16">
+            <input id="dreamInput" type="text" placeholder="Recite the fragments of your memory..." 
+                class="input-minimal w-full py-4 text-xl font-extralight text-center italic placeholder:opacity-20">
+            <button onclick="processDream()" class="btn-premium px-16 py-5">
+                Analyze Sequence
+            </button>
+        </div>
+    </main>
+
+    <div id="loading-section" class="hidden-ui flex-col items-center justify-center h-96 mt-20 z-10">
+        <p class="text-[10px] tracking-[0.6em] opacity-40 uppercase italic animate-pulse">Extracting Subconscious Geometry...</p>
+    </div>
+
+    <section id="result-section" class="hidden-ui w-full max-w-6xl px-8 z-10 py-32">
+        <div class="glass p-12 md:p-24 grid md:grid-cols-2 gap-20 items-center">
+            
+            <div class="space-y-10">
+                <div>
+                    <span class="text-[9px] tracking-[0.4em] opacity-30 uppercase block mb-6">Interpretation No. 0822</span>
+                    <h2 class="serif text-5xl italic font-light mb-8">The Liquid Monolith</h2>
+                    <p class="text-sm font-extralight opacity-50 leading-[2.3] tracking-wide">
+                        Your dream suggests a profound state of 'Metamorphic Transition'. 
+                        The recurring imagery of dark water and structural monoliths 
+                        points toward a psychological preparation for a new creative era.
+                    </p>
+                </div>
+                <div class="pt-6 border-t border-white/5">
+                    <p class="text-[9px] tracking-[0.2em] opacity-30 leading-loose uppercase">Keywords: Transition / Void / Structure</p>
+                </div>
+            </div>
+
+            <div class="relative aspect-square flex items-center justify-center overflow-hidden border border-white/10">
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-purple-900/40 to-transparent blur-3xl opacity-50"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 z-20">
+                    <div class="mb-6 opacity-40">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </div>
+                    <h3 class="serif text-2xl italic mb-4 opacity-90">Visual Artifact Locked</h3>
+                    <p class="text-[10px] tracking-widest opacity-40 mb-10 leading-relaxed uppercase">
+                        Visualize your dream into a unique <br> digital reconstruction.
+                    </p>
+                    <button class="btn-premium px-10 py-4 text-[9px]">Unlock Artifact — $1.99</button>
+                </div>
+                <div class="w-1/2 h-1/2 border border-white/5 rotate-45 opacity-10"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="membership" class="w-full max-w-7xl px-12 py-60 z-10 border-t border-white/5">
+        <div class="grid md:grid-cols-2 gap-24 items-center">
+            <div class="space-y-12">
+                <span class="text-[10px] tracking-[0.5em] text-violet-400 font-medium uppercase">Premium Membership</span>
+                <h2 class="serif text-6xl italic font-light leading-tight">Your Subconscious, <br> <span class="opacity-40">Mapped in Detail.</span></h2>
+                <p class="text-sm font-extralight opacity-50 leading-loose max-w-md">
+                    월 멤버십 구독 시, 매일 기록한 꿈의 데이터를 종합하여 당신의 '무의식 지도(Subconscious Map)' 리포트를 매달 제공합니다. 어떤 감정이 반복되는지, 어떤 상징이 당신의 미래를 예언하는지 고도로 정밀한 AI 리포트로 확인하세요.
+                </p>
+                <div class="pt-8 flex gap-8">
+                    <button class="btn-premium px-12 py-5">Subscribe — $29/mo</button>
+                    <button class="text-[9px] tracking-[0.3em] opacity-40 hover:opacity-100 transition border-b border-white/10 pb-1">VIEW SAMPLE REPORT</button>
+                </div>
+            </div>
+            
+            <div class="glass p-12 aspect-[3/4] flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-violet-600/5 blur-[80px]"></div>
+                <div class="space-y-10 relative z-10">
+                    <div class="flex justify-between items-center opacity-30">
+                        <span class="text-[8px] tracking-widest">MONTHLY ANALYTICS</span>
+                        <span class="text-[8px] tracking-widest">MARCH 2026</span>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="text-[10px] opacity-40">DOMINANT THEMES</div>
+                        <div class="h-[1px] w-full bg-white/10 relative">
+                            <div class="absolute left-0 top-0 h-full bg-violet-500 w-3/4"></div>
+                        </div>
+                        <div class="flex justify-between text-[9px] opacity-60">
+                            <span>Fluidity</span><span>75%</span>
+                        </div>
+                    </div>
+                    <div class="space-y-4 pt-4">
+                        <div class="text-[10px] opacity-40">EMOTIONAL SPECTRUM</div>
+                        <div class="flex gap-2">
+                            <div class="w-2 h-2 rounded-full bg-violet-500"></div>
+                            <div class="w-2 h-2 rounded-full bg-indigo-500 opacity-50"></div>
+                            <div class="w-2 h-2 rounded-full bg-blue-500 opacity-20"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="serif text-3xl italic opacity-80 leading-relaxed pt-20 border-t border-white/5">
+                    "A profound shift in perspective is approaching."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-20 opacity-20 text-[8px] tracking-[0.5em] z-10">
+        © 2026 REMNANT STUDIO. OWN YOUR NIGHT.
+    </footer>
+
+    <script>
+        function processDream() {
+            const val = document.getElementById('dreamInput').value;
+            if(!val) return alert("Recite your dream fragments.");
+            
+            document.getElementById('hero-section').classList.add('hidden-ui');
+            document.getElementById('loading-section').classList.remove('hidden-ui');
+            document.getElementById('loading-section').classList.add('flex');
+
+            setTimeout(() => {
+                document.getElementById('loading-section').classList.add('hidden-ui');
+                document.getElementById('result-section').classList.remove('hidden-ui');
+                document.getElementById('result-section').classList.add('fade-in');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
