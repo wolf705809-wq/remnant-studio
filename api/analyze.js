@@ -1,47 +1,63 @@
-// api/analyze.js (구글 표준 v1beta 주소 적용 버전)
+// api/analyze.js - REMNANT FINAL DEBUG VERSION
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
   
   const { answers } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
 
-  if (!apiKey) return res.status(500).json({ error: "API Key Missing" });
+  // 1. 로그 기록: 서버가 작동 시작했음을 알림
+  console.log("--- Analysis Started ---");
+  console.log("Answers Received:", answers);
 
-  // 🚀 가장 안정적인 v1beta 주소와 gemini-1.5-flash 모델명입니다.
+  if (!apiKey) {
+    console.error("CRITICAL ERROR: GEMINI_API_KEY is missing!");
+    return res.status(500).json({ error: "환경변수 GEMINI_API_KEY를 찾을 수 없습니다." });
+  }
+
+  // 2. 가장 안정적인 구글 공식 주소 (v1beta 사용)
   const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-  const prompt = {
+  const promptData = {
     contents: [{
       parts: [{
-        text: `You are a psychoanalyst. Analyze these 7 dream fragments and return ONLY a valid JSON.
+        text: `You are a world-class psychoanalyst. Analyze these 7 dream fragments and output ONLY a valid JSON. 
         Data: ${answers.join(" | ")}
-        JSON Structure: {"keywords": "WORD1 • WORD2 • WORD3", "rarity": "0.7%", "report": {"title": "Title", "summary": "Analysis Summary"}}`
+        Required JSON format: 
+        {
+          "keywords": "WORD1 • WORD2 • WORD3",
+          "rarity": "0.7%",
+          "report": {
+            "title": "Dossier Title",
+            "summary": "Deep analysis summary"
+          }
+        }`
       }]
-    }]
+    }],
+    generationConfig: { response_mime_type: "application/json" }
   };
 
   try {
     const response = await fetch(apiURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(prompt)
+      body: JSON.stringify(promptData)
     });
 
     const data = await response.json();
 
-    // 구글 API에서 에러를 보냈을 경우 처리
+    // 3. 구글에서 에러를 보낸 경우 로그에 상세히 기록
     if (data.error) {
-      console.error("Google API Error:", data.error.message);
+      console.error("Google API Response Error:", JSON.stringify(data.error));
       return res.status(data.error.code || 500).json({ error: data.error.message });
     }
 
-    // AI의 대답 추출 및 정제
-    let text = data.candidates[0].content.parts[0].text;
-    text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    
-    res.status(200).json(JSON.parse(text));
+    // 4. 결과 추출 및 응답
+    const resultText = data.candidates[0].content.parts[0].text;
+    res.status(200).json(JSON.parse(resultText));
+    console.log("--- Analysis Success ---");
+
   } catch (error) {
-    console.error("Server Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Server-side Catch Error:", error.message);
+    res.status(500).json({ error: "서버 내부 오류가 발생했습니다." });
   }
 }
