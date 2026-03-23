@@ -9,31 +9,60 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD&locale=en_US"></script>
     <style>
-        :root { --bg: #030308; --c1: rgba(99, 102, 241, 0.25); --c2: rgba(236, 72, 153, 0.2); }
+        :root { --bg: #030308; --c1: rgba(99, 102, 241, 0.25); --c2: rgba(236, 72, 153, 0.2); --gold: #E5C38B; }
         body { background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; }
         .serif { font-family: 'Cormorant Garamond', serif; }
+        
+        /* 배경 효과 */
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://grainy-gradients.vercel.app/noise.svg'); opacity: 0.07; z-index: 100; pointer-events: none; }
         .aurora { position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1; background: radial-gradient(circle at 20% 30%, var(--c1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, var(--c2) 0%, transparent 50%); filter: blur(80px); transition: all 4s ease; animation: drift 40s infinite alternate linear; }
         @keyframes drift { from { transform: rotate(0deg) scale(1); } to { transform: rotate(10deg) scale(1.1); } }
+
+        /* UI 요소 */
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .btn-luxury { background: #ffffff; color: #000; letter-spacing: 0.4em; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); cursor: pointer; }
         .btn-luxury:hover { transform: translateY(-3px); box-shadow: 0 20px 50px rgba(255, 255, 255, 0.3); }
+        
         .step { display: none; opacity: 0; }
         .step.active { display: flex; animation: fadeIn 2s forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 로딩 애니메이션 */
         .neural-node { width: 4px; height: 4px; background: white; border-radius: 50%; position: absolute; filter: blur(1px); animation: pulse 2s infinite alternate; }
         @keyframes pulse { from { opacity: 0.2; transform: scale(1); } to { opacity: 1; transform: scale(1.5); } }
-        /* 결과 잠금 해제 효과 */
+        
+        /* 🔓 [신규] 결과 잠금 해제 스펙타클 효과 */
         .blur-report { filter: blur(25px); opacity: 0.4; transition: all 3s cubic-bezier(0.19, 1, 0.22, 1); pointer-events: none; }
         .blur-report.unlocked { filter: blur(0px); opacity: 1; pointer-events: auto; }
         .payment-overlay { transition: all 1.5s ease; }
         .payment-overlay.hidden { opacity: 0; pointer-events: none; transform: translateY(30px); }
+
+        /* ✨ [신규] 결제 성공 축하 화면 */
+        #payment-success-overlay { position: fixed; inset: 0; background: black; z-index: 200; display: none; flex-direction: column; items-center; justify-center; opacity: 0; transition: opacity 1s ease; }
+        #payment-success-overlay.active { display: flex; opacity: 1; }
+        .shatter-icon { font-size: 4rem; color: var(--gold); animation: shatter-pop 1s ease-out; }
+        @keyframes shatter-pop { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 50% { transform: scale(1.1) rotate(5deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+
+        /* 📸 [신규] 인스타그램 전용 아티팩트 카드 디자인 */
+        #artifact-card-hidden-container { position: fixed; top: -2000px; left: -2000px; z-index: -1000; } /* 화면엔 안 보임 */
+        .artifact-card-luxury { width: 1080px; height: 1350px; background: #030308; padding: 100px; display: flex; flex-direction: column; justify-content: space-between; border: 15px solid #111; position: relative; }
+        .artifact-card-luxury::before { content:""; position:absolute; inset: 0; border: 2px solid var(--gold); margin: 25px; opacity: 0.6; } /* 금 테두리 */
+        
         .keyword-giant { line-height: 0.8; letter-spacing: -0.05em; background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: text-pulse 4s infinite alternate; }
         @keyframes text-pulse { from { opacity: 0.6; filter: brightness(1); } to { opacity: 1; filter: brightness(1.3); } }
     </style>
 </head>
 <body class="h-screen w-screen relative">
     <div class="aurora" id="aurora-bg"></div>
+    
+    <div id="payment-success-overlay">
+        <div class="space-y-6 text-center">
+            <div class="serif shatter-icon">✦</div>
+            <h1 class="serif text-5xl italic font-light tracking-wide text-indigo-100">Artifact Unlocked</h1>
+            <p class="text-[11px] tracking-[0.6em] uppercase opacity-60">Mapping Subconscious Archive...</p>
+        </div>
+    </div>
+
     <nav class="fixed top-0 w-full flex justify-between items-center px-12 py-10 z-50">
         <div class="text-2xl font-light tracking-[0.5em] serif italic">REMNANT</div>
         <div class="text-[9px] tracking-[0.5em] opacity-40">BEYOND THE NIGHT</div>
@@ -67,27 +96,47 @@
     <section id="step-4" class="step flex-col items-center justify-center h-full w-full max-w-7xl mx-auto px-12 z-10">
         <div class="grid md:grid-cols-2 gap-24 items-center w-full">
             <div>
-                <span id="rarity-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase">ANALYZING...</span>
-                <h2 id="final-keywords" class="serif text-8xl md:text-[9rem] italic keyword-giant">--<br>--<br>--</h2>
-                <button id="save-card-btn" onclick="saveArtifactAsImage()" class="btn-luxury px-10 py-4 mt-16 opacity-0 pointer-events-none transition-all duration-1000">Save Artifact Card</button>
+                <span id="rarity-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase">RARITY: 0.8%</span>
+                <h2 id="final-keywords" class="serif text-8xl md:text-[9rem] italic keyword-giant">VOID<br>VELVET<br>ECHO</h2>
+                
+                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-10 py-4 mt-16 opacity-0 pointer-events-none transition-all duration-1000">Share Your Artifact</button>
             </div>
-            <div id="report-card-container" class="glass p-12 relative overflow-hidden h-[600px] flex flex-col rounded-sm">
+
+            <div class="glass p-12 relative overflow-hidden h-[600px] flex flex-col rounded-sm">
                 <div id="report-content" class="blur-report space-y-12">
                     <h3 id="report-title" class="serif text-4xl italic">Dossier: Pending</h3>
-                    <p id="report-summary" class="text-[10px] leading-loose opacity-60">Awaiting subconscious artifacts...</p>
+                    <p id="report-summary" class="text-[10px] leading-loose opacity-60">The architecture of your sequence...</p>
                     <div class="h-40 bg-white/5 rounded-sm flex items-center justify-center italic text-[9px] opacity-20 tracking-widest uppercase">Generative Artifact Pending</div>
                 </div>
+
                 <div id="payment-overlay" class="payment-overlay absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-xl p-12 text-center">
                     <h4 class="serif text-3xl italic mb-6">Own Your Artifact</h4>
                     <p class="text-[10px] tracking-widest opacity-60 mb-12 uppercase">Unlock the full 12-page Dossier <br> & high-resolution generative artifact.</p>
-                    <div id="paypal-button-container" class="w-full max-w-[300px]"></div>
+                    <div id="paypal-button-container" class="w-full"></div>
                 </div>
             </div>
         </div>
     </section>
 
+    <div id="artifact-card-hidden-container">
+        <div id="artifact-card-to-capture" class="artifact-card-luxury text-center">
+            <div class="space-y-6">
+                <span id="card-rarity" class="text-[20px] tracking-[0.8em] text-indigo-400 font-bold uppercase serif">RARITY: Legendary (0.1%)</span>
+                <h1 id="card-keywords" class="serif text-[130px] italic keyword-giant">VOID<br>VELVET<br>ECHO</h1>
+            </div>
+            
+            <div class="space-y-6">
+                <p id="card-title" class="serif text-[36px] italic opacity-80 mt-20">The Architecture of Time Paradox</p>
+                <div class="w-20 h-0.5 bg-indigo-500 mx-auto"></div>
+                <p class="text-[16px] tracking-[1em] uppercase serif opacity-40 mt-10">REMNANT Studio | Dossier RMNT-2026</p>
+            </div>
+        </div>
+    </div>
+
+    <audio id="success-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
     <script>
-        const questions = ["What was the dominant hue of the atmosphere?", "Which emotion lingered upon awakening?", "Were you an observer or the architect?", "Was the gravity of the space heavy or absent?", "What singular object felt most alive?", "Did you recognize yourself in the sequence?", "How did the dream dissolve into reality?"];
+        const questions = ["Atmosphere Hue?", "Lingering Emotion?", "Observer or Architect?", "Gravity Condition?", "Focal Object?", "Recognition of Self?", "Dissolution?"];
         let currentStep = 0; let userAnswers = [];
         function nextStep(n) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); setTimeout(() => document.getElementById(`step-${n}`).classList.add('active'), 100); }
         function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 12 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 12 ? "auto" : "none"; }
@@ -101,54 +150,11 @@
                 document.getElementById('progress').innerText = `Inquiry 0${currentStep + 1} / 07`;
                 checkLength();
             } else {
-                nextStep(3);
-                const loadingTexts = ["Isolating Archetypes...", "Calculating Neural Resonance...", "Finalizing Synthesis..."];
-                let i = 0; const interval = setInterval(() => { if(i < loadingTexts.length) document.getElementById('loading-text').innerText = loadingTexts[i++]; }, 1500);
-
+                nextStep(3); // 로딩 화면으로
                 try {
                     const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: userAnswers }) });
-                    if (!res.ok) throw new Error("AI 분석 실패");
                     const data = await res.json();
+                    
+                    // UI에 데이터 입히기
                     document.getElementById('final-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
-                    document.getElementById('rarity-text').innerText = `RARITY: ${data.rarity} - COSMIC SYMBOLISM`;
-                    document.getElementById('report-title').innerText = `Dossier: ${data.report.title}`;
-                    document.getElementById('report-summary').innerText = data.report.summary;
-                    clearInterval(interval);
-                    setTimeout(() => nextStep(4), 1000);
-                } catch(e) { 
-                    clearInterval(interval);
-                    alert("The void is unresponsive. (API 키 또는 서버 설정을 확인해주세요)");
-                    nextStep(1); 
-                }
-            }
-        }
-
-        function unlockReport() {
-            document.getElementById('payment-overlay').classList.add('hidden');
-            document.getElementById('report-content').classList.add('unlocked');
-            const saveBtn = document.getElementById('save-card-btn');
-            saveBtn.style.opacity = "1"; saveBtn.style.pointerEvents = "auto";
-            alert("Subconscious Artifact Unlocked.");
-        }
-
-        function saveArtifactAsImage() {
-            const container = document.getElementById('report-card-container');
-            const saveBtn = document.getElementById('save-card-btn');
-            saveBtn.innerText = "Processing...";
-            html2canvas(container, { backgroundColor: '#030308', scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'REMNANT_Artifact.png';
-                link.href = canvas.toDataURL();
-                link.click();
-                saveBtn.innerText = "Save Artifact Card";
-            });
-        }
-
-        paypal.Buttons({
-            style: { layout: 'vertical', color: 'silver', shape: 'rect', label: 'paypal', tagline: false },
-            createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { value: '1.99' } }] }),
-            onApprove: (data, actions) => actions.order.capture().then(details => unlockReport())
-        }).render('#paypal-button-container');
-    </script>
-</body>
-</html>
+                    document.getElementById('rarity-text').innerText = `RARITY: ${data.
