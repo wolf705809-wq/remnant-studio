@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REMNANT | Premium Subconscious Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght=0,300;0,400;1,300&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD&locale=en_US"></script>
     <style>
@@ -31,7 +31,7 @@
         @keyframes shatter-pop { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 50% { transform: scale(1.1) rotate(5deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
         
         #artifact-card-hidden-container { position: fixed; top: -3000px; left: -3000px; z-index: -1000; }
-        .artifact-card-luxury { width: 1080px; height: 1920px; background: #030308; padding: 100px; display: flex; flex-direction: column; justify-content: space-between; border: 15px solid #111; position: relative; text-align: center; }
+        .artifact-card-luxury { width: 1080px; height: 1920px; background: #030308; padding: 100px; display: flex; flex-direction: column; justify-content: space-between; border: 15px solid #111; position: relative; }
         .artifact-card-luxury::before { content:""; position:absolute; inset: 0; border: 2px solid var(--gold); margin: 25px; opacity: 0.6; }
         
         .keyword-giant { line-height: 1.1; letter-spacing: -0.02em; background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -57,8 +57,8 @@
         .payment-overlay.hidden { opacity: 0; pointer-events: none; transform: translateY(30px); }
     </style>
 </head>
-<body>
-    <div class="aurora"></div>
+<body class="h-screen w-screen relative">
+    <div class="aurora" id="aurora-bg"></div>
     <div id="payment-success-overlay">
         <div class="space-y-6 text-center">
             <div class="serif shatter-icon">✦</div>
@@ -72,14 +72,14 @@
     </nav>
     <section id="step-1" class="step active">
         <div class="space-y-12 mb-20 text-center">
-            <p class="serif text-2xl italic font-light opacity-40">"You are the stranger in your own mind."</p>
-            <h2 class="serif text-5xl md:text-7xl italic font-light">Labyrinth of the <span class="text-indigo-300">Self.</span></h2>
+            <p class="serif text-2xl italic font-light opacity-40">"The dream is the royal road..."</p>
+            <h2 class="serif text-5xl md:text-7xl italic font-light">Cathedral of <span class="text-indigo-300">Symbols.</span></h2>
         </div>
-        <button onclick="nextStep(2)" class="btn-luxury px-20 py-6">Face the Reflection</button>
+        <button onclick="nextStep(2)" class="btn-luxury px-20 py-6">Recite Your Dream</button>
     </section>
     <section id="step-2" class="step">
         <span id="progress" class="text-[9px] tracking-[0.6em] text-indigo-400 mb-10 uppercase font-bold">Inquiry 01 / 07</span>
-        <h3 id="question-text" class="serif text-4xl md:text-5xl italic mb-20 leading-snug text-center">Describe the precise temperature and texture of the atmosphere.</h3>
+        <h3 id="question-text" class="serif text-4xl md:text-5xl italic mb-20 leading-snug text-center">What was the dominant hue <br> of the atmosphere?</h3>
         <input id="answer-input" type="text" oninput="checkLength()" placeholder="Recite the fragments..." class="bg-transparent border-b border-white/10 w-full max-w-2xl py-6 text-2xl font-extralight italic text-center focus:outline-none focus:border-indigo-500 transition-all duration-1000">
         <button id="next-btn" onclick="handleQuestion()" class="btn-luxury px-14 py-5 mt-24 opacity-20 pointer-events-none">Continue Sequence</button>
     </section>
@@ -128,7 +128,7 @@
             </div>
             <h1 id="card-keywords" class="serif text-[120px] leading-[0.9] italic keyword-giant mt-[50px]">VOID<br>VELVET<br>ECHO</h1>
             <div class="space-y-6">
-                <p id="card-title" class="serif text-[36px] italic opacity-80 mt-20">The Architecture of Time Paradox</p>
+                <p id="card-title" class="serif text-[36px] italic opacity-80 mt-20">The Architecture of Subconscious</p>
                 <div class="w-20 h-0.5 bg-indigo-500 mx-auto"></div>
                 <p class="text-[18px] tracking-[1em] opacity-40 mt-10">REMNANT-STUDIO.VERCEL.APP</p>
             </div>
@@ -137,16 +137,7 @@
     
     <audio id="success-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
     <script>
-        // 🚀 [신규] 7가지 라캉주의 질문 적용
-        const questions = [
-            "Describe the precise temperature and texture of the atmosphere.",
-            "What was the secret you were trying to hide from the dream itself?",
-            "Whose face were you wearing when you looked at your hands?",
-            "What logic or physical law of the real world was completely broken?",
-            "Describe the shape of the anxiety or desire that guided you.",
-            "What was the one thing that felt completely out of place?",
-            "How did the illusion eject you back into reality?"
-        ];
+        const questions = ["Atmosphere Hue?", "Lingering Emotion?", "Observer or Architect?", "Gravity Condition?", "Focal Object?", "Recognition of Self?", "Dissolution?"];
         let currentStep = 0; let userAnswers = [];
         function nextStep(n) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); setTimeout(() => { const target = document.getElementById('step-' + n); if(target) target.classList.add('active'); }, 100); }
         function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 10 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 10 ? "auto" : "none"; }
@@ -160,6 +151,16 @@
                 nextStep(3);
                 try {
                     const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: userAnswers }) });
+                    // 🚀 [해결 포인트 1] JSON 파싱 에러 방어: image_8.png의 responseMimeType 관련 에러 대책
+                    if (!res.ok) {
+                        const contentType = res.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            const errorData = await res.json();
+                            throw new Error(errorData.error || "서버에서 알 수 없는 오류가 발생했습니다.");
+                        } else {
+                            throw new Error("서버에서 올바른 형식이 아닌 응답을 받았습니다.");
+                        }
+                    }
                     const data = await res.json();
                     
                     document.getElementById('final-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
@@ -175,7 +176,12 @@
                     
                     document.getElementById('analyzing-text').classList.add('hidden');
                     setTimeout(() => nextStep(4), 2000);
-                } catch(e) { console.error(e); nextStep(4); }
+                } catch(e) { 
+                    console.error("Critical Error Detected:", e.message);
+                    // 에러 메시지를 팝업으로 사용자에게 명확히 전달
+                    alert(`An artifact paradox occurred: ${e.message}\nThis dimension is currently unstable. Please try reciting your dream later.`);
+                    nextStep(4); 
+                }
             }
         }
 
@@ -187,21 +193,76 @@
                 overlay.classList.remove('active');
                 document.getElementById('payment-overlay').classList.add('hidden');
                 
-                // 미리보기 숨기고 전체 글 페이드인, 스크롤 활성화
                 document.getElementById('report-summary-teaser').classList.add('hidden');
                 document.getElementById('report-summary-full').classList.add('show');
                 document.getElementById('report-content').style.overflowY = 'auto';
             }, 3500);
         }
 
+        // 🚀 [해결 포인트 2] 인스타그램용 이미지를 생성해서 다운로드하는 새로운 함수 (html2canvas 사용 제거)
         function saveSubconsciousArtifact() {
-            const btn = document.getElementById('save-card-btn'); 
-            const originalText = btn.innerText;
-            btn.innerText = "Processing...";
-            html2canvas(document.getElementById('artifact-card-to-capture'), { backgroundColor: '#030308', scale: 1 }).then(canvas => {
-                const link = document.createElement('a'); link.download = 'REMNANT_Artifact.png'; link.href = canvas.toDataURL(); link.click(); 
-                btn.innerText = originalText;
-            });
+            const btn = document.getElementById('save-card-btn'); btn.innerText = "Processing Artifact...";
+
+            const keywords = document.getElementById('final-keywords').innerText;
+            const rarity = document.getElementById('rarity-text').innerText;
+            const title = document.getElementById('report-title').innerText;
+
+            // 🚀 [신규 로직] html2canvas 대신 고해상도 팝업창을 엽니다.
+            // 팝업창 크기를 인스타그램 스토리 비율(9:16)에 맞추고, 리사이징을 막아 해상도를 유지합니다.
+            const popup = window.open("", "REMNANT_Artifact_Card", "width=1080,height=1920,resizable=no,scrollbars=no,status=no");
+
+            // 팝업창 HTML 생성 (styles+content)
+            const html = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>REMNANT | Premium Subconscious Artifact</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+                    <style>
+                        :root { --bg: #030308; --gold: #E5C38B; }
+                        body { background: #000; color: #ffffff; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; -webkit-font-smoothing: antialiased; }
+                        .serif { font-family: 'Cormorant Garamond', serif; }
+                        .artifact-container { width: 1080px; height: 1920px; background: var(--bg); padding: 100px; display: flex; flex-direction: column; justify-content: space-between; position: relative; border: 15px solid #111; text-align: center; }
+                        .artifact-container::before { content:""; position:absolute; inset: 0; border: 2px solid var(--gold); margin: 25px; opacity: 0.6; }
+                        .header { font-size: 32px; tracking: 0.5em; opacity: 0.6; }
+                        .divider { width: 100%; height: 2px; background: rgba(129, 140, 248, 0.2); margin: 40px auto; }
+                        .rarity { font-size: 20px; tracking: 0.8em; color: #818CF8; font-weight: bold; }
+                        /* 🚀 키워드 그라데이션 및 펄싱 효과 재현 */
+                        .keywords { font-size: 150px; leading: 0.8; letter-spacing: -0.05em; margin-top: 100px; background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: text-pulse 4s infinite alternate; }
+                        @keyframes text-pulse { from { opacity: 0.6; filter: brightness(1); } to { opacity: 1; filter: brightness(1.3); } }
+                        .title { font-size: 36px; italic; opacity: 0.8; margin-top: 20px; }
+                        .link { font-size: 18px; tracking: 1em; opacity: 0.4; margin-top: 10px; text-transform: uppercase; }
+                        /* 🚀 유저 가이드 문구 추가 */
+                        .instruction { position: absolute; bottom: -80px; left: 0; width: 100%; text-align: center; font-size: 24px; color: var(--gold); opacity: 0.8; }
+                    </style>
+                </head>
+                <body>
+                    <div class="artifact-container">
+                        <div>
+                            <div class="serif header">REMNANT | Discover Your Subconscious</div>
+                            <div class="divider"></div>
+                            <div class="serif rarity">${rarity}</div>
+                        </div>
+                        <h1 class="serif keywords">${keywords.replace(/\n/g, '<br>')}</h1>
+                        <div>
+                            <p class="serif title">${title}</p>
+                            <div style="width: 80px; height: 0.5px; background: #818CF8; margin: 30px auto;"></div>
+                            <p class="link serif uppercase">remnant-studio.vercel.app</p>
+                        </div>
+                        <p class="serif instruction">Please SCREENSHOT or LONG PRESS to save this Premium Artifact Card.</p>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            // 팝업창에 HTML 작성
+            popup.document.open();
+            popup.document.write(html);
+            popup.document.close();
+
+            // 🚀 사용자가 팝업창에서 직접 저장하도록 안내한 후, 버튼을 원복합니다.
+            setTimeout(() => btn.innerText = "Share Your Artifact", 500);
         }
         
         window.onload = () => {
