@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMNANT | Premium Subconscious Analysis (Free)</title>
+    <title>REMNANT | 프리미엄 무의식 분석</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght=0,300;0,400;1,300&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;200;300;400;500&family=Noto+Serif+KR:wght@200;300;400;500&display=swap" rel="stylesheet">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         :root { --bg: #030308; --c1: rgba(99, 102, 241, 0.25); --c2: rgba(236, 72, 153, 0.2); --gold: #E5C38B; }
-        body { background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; }
-        .serif { font-family: 'Cormorant Garamond', serif; }
+        body { background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; word-break: keep-all; }
+        /* 🇰🇷 영문은 Garamond, 한글은 Noto Serif KR이 적용되도록 세팅 */
+        .serif { font-family: 'Cormorant Garamond', 'Noto Serif KR', serif; }
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://grainy-gradients.vercel.app/noise.svg'); opacity: 0.07; z-index: 100; pointer-events: none; }
         .aurora { position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1; background: radial-gradient(circle at 20% 30%, var(--c1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, var(--c2) 0%, transparent 50%); filter: blur(80px); transition: all 4s ease; animation: drift 40s infinite alternate linear; }
         @keyframes drift { from { transform: rotate(0deg) scale(1); } to { transform: rotate(10deg) scale(1.1); } }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .btn-luxury { background: #ffffff; color: #000; letter-spacing: 0.4em; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); cursor: pointer; display: inline-block; }
+        .btn-luxury { background: #ffffff; color: #000; letter-spacing: 0.2em; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); cursor: pointer; display: inline-block; }
         .btn-luxury:hover { transform: translateY(-3px); box-shadow: 0 20px 50px rgba(255, 255, 255, 0.3); }
         .step { display: none; opacity: 0; height: 100vh; width: 100%; flex-direction: column; align-items: center; justify-content: center; }
         .step.active { display: flex; animation: fadeIn 2s forwards; }
@@ -28,7 +29,7 @@
         .artifact-card-luxury { width: 1080px; height: 1920px; background: #030308; padding: 100px; display: flex; flex-direction: column; justify-content: space-between; border: 15px solid #111; position: relative; text-align: center; }
         .artifact-card-luxury::before { content:""; position:absolute; inset: 0; border: 2px solid var(--gold); margin: 25px; opacity: 0.6; }
         
-        .keyword-giant { line-height: 1.1; letter-spacing: -0.02em; background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .keyword-giant { line-height: 1.2; letter-spacing: -0.02em; background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         @media (max-width: 768px) {
             .nav-item { display: none; }
@@ -36,9 +37,9 @@
             .keyword-giant { font-size: 3.5rem !important; }
             #report-card-container { height: 450px !important; padding: 2rem !important; }
             .btn-luxury { px: 12 !important; py: 4 !important; }
+            #question-text { font-size: 1.8rem !important; word-break: keep-all; }
         }
 
-        /* 💸 결제 관련 CSS 삭제 및 리포트 본문 스타일 유지 */
         .report-summary { text-sm md:text-base font-light leading-relaxed text-white/90; }
 
         .custom-scroll::-webkit-scrollbar { width: 4px; }
@@ -55,16 +56,16 @@
     </nav>
     <section id="step-1" class="step active">
         <div class="space-y-12 mb-20 text-center">
-            <p class="serif text-2xl italic font-light opacity-40">"The dream is the royal road..."</p>
-            <h2 class="serif text-5xl md:text-7xl italic font-light">Cathedral of <span class="text-indigo-300">Symbols.</span></h2>
+            <p class="serif text-2xl italic font-light opacity-60">"꿈은 무의식으로 가는 왕도이다..."</p>
+            <h2 class="serif text-5xl md:text-7xl italic font-light">상징의 <span class="text-indigo-300">대성당.</span></h2>
         </div>
-        <button onclick="nextStep(2)" class="btn-luxury px-20 py-6">Recite Your Dream</button>
+        <button onclick="nextStep(2)" class="btn-luxury px-20 py-6">꿈을 기록하기</button>
     </section>
     <section id="step-2" class="step">
-        <span id="progress" class="text-[9px] tracking-[0.6em] text-indigo-400 mb-10 uppercase font-bold">Inquiry 01 / 07</span>
-        <h3 id="question-text" class="serif text-4xl md:text-5xl italic mb-20 leading-snug text-center">What was the dominant hue <br> of the atmosphere?</h3>
-        <input id="answer-input" type="text" oninput="checkLength()" placeholder="Recite the fragments..." class="bg-transparent border-b border-white/10 w-full max-w-2xl py-6 text-2xl font-extralight italic text-center focus:outline-none focus:border-indigo-500 transition-all duration-1000">
-        <button id="next-btn" onclick="handleQuestion()" class="btn-luxury px-14 py-5 mt-24 opacity-20 pointer-events-none">Continue Sequence</button>
+        <span id="progress" class="text-[10px] tracking-[0.4em] text-indigo-400 mb-10 font-bold">질문 01 / 07</span>
+        <h3 id="question-text" class="serif text-4xl md:text-5xl italic mb-20 leading-snug text-center">그곳을 지배하던 공기의 색깔은 <br> 무엇이었나요?</h3>
+        <input id="answer-input" type="text" oninput="checkLength()" placeholder="기억의 조각을 적어주세요..." class="bg-transparent border-b border-white/10 w-full max-w-2xl py-6 text-xl md:text-2xl font-extralight italic text-center focus:outline-none focus:border-indigo-500 transition-all duration-1000">
+        <button id="next-btn" onclick="handleQuestion()" class="btn-luxury px-14 py-5 mt-24 opacity-20 pointer-events-none">다음으로 넘어가기</button>
     </section>
     <div id="step-3" class="step">
         <div class="relative w-64 h-64 mb-12">
@@ -73,21 +74,21 @@
             <div class="neural-node" style="top:70%; left:20%; animation-delay: 0.8s;"></div>
             <div class="absolute inset-0 border border-white/5 rounded-full" style="animation: spin 10s linear infinite;"></div>
         </div>
-        <p id="loading-text" class="text-[10px] tracking-[0.8em] opacity-50 uppercase italic">Mapping Subconscious Architecture...</p>
+        <p id="loading-text" class="text-[11px] tracking-[0.6em] opacity-50 uppercase italic">무의식의 구조를 매핑하는 중...</p>
     </div>
     
     <section id="step-4" class="step px-8 md:px-12">
         <div class="flex flex-row step-4-layout items-center justify-between w-full max-w-7xl mx-auto gap-12">
             <div class="w-full md:w-1/2 flex flex-col justify-center pr-4">
-                <span id="analyzing-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase hidden">ANALYZING...</span>
-                <h2 id="final-keywords" class="serif text-5xl md:text-6xl italic keyword-giant">VOID<br>VELVET<br>ECHO</h2>
+                <span id="analyzing-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase hidden">분석 중...</span>
+                <h2 id="final-keywords" class="serif text-5xl md:text-6xl italic keyword-giant">공허<br>벨벳<br>메아리</h2>
                 
-                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-10 py-4 mt-8 w-max">Save Instagram Card</button>
+                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-10 py-4 mt-8 w-max">인스타 카드 저장하기</button>
             </div>
             
             <div id="report-card-container" class="w-full md:w-1/2 glass p-8 md:p-12 relative h-[500px] md:h-[600px] flex flex-col rounded-sm overflow-hidden">
                 <div id="report-content" class="h-full custom-scroll pr-4 pb-12 space-y-8 overflow-y-auto">
-                    <h3 id="report-title" class="serif text-3xl md:text-4xl italic text-white/90">Dossier: Pending</h3>
+                    <h3 id="report-title" class="serif text-3xl md:text-4xl italic text-white/90">분석 리포트: 대기 중</h3>
                     <p id="report-summary" class="report-summary text-sm md:text-base font-light leading-relaxed text-white/90"></p>
                 </div>
             </div>
@@ -97,63 +98,65 @@
     <div id="artifact-card-hidden-container">
         <div id="artifact-card-to-capture" class="artifact-card-luxury text-center">
             <div class="space-y-6">
-                <div class="serif text-[32px] tracking-[0.5em] opacity-60">REMNANT | Discover Your Subconscious</div>
+                <div class="serif text-[32px] tracking-[0.5em] opacity-60">REMNANT | 당신의 무의식을 발견하세요</div>
                 <div class="w-full h-0.5 bg-indigo-500/20 my-10 mx-auto"></div>
-                <div id="card-rarity" class="serif text-[20px] tracking-[0.8em] text-indigo-400 font-bold uppercase">RARITY: ANALYSIS INITIATED</div>
+                <div id="card-rarity" class="serif text-[20px] tracking-[0.6em] text-indigo-400 font-bold">희귀도: 분석 시작됨</div>
             </div>
-            <h1 id="card-keywords" class="serif text-[120px] leading-[0.9] italic keyword-giant mt-[50px]">VOID<br>VELVET<br>ECHO</h1>
+            <h1 id="card-keywords" class="serif text-[120px] leading-[1.1] italic keyword-giant mt-[50px]">공허<br>벨벳<br>메아리</h1>
             <div class="space-y-6">
-                <p id="card-title" class="serif text-[36px] italic opacity-80 mt-20">The Architecture of Subconscious</p>
+                <p id="card-title" class="serif text-[36px] italic opacity-80 mt-20">무의식의 건축학</p>
                 <div class="w-20 h-0.5 bg-indigo-500 mx-auto"></div>
-                <p class="text-[18px] tracking-[1em] opacity-40 mt-10">REMNANT-STUDIO.VERCEL.APP</p>
+                <p class="text-[18px] tracking-[0.8em] opacity-40 mt-10">REMNANT-STUDIO.VERCEL.APP</p>
             </div>
         </div>
     </div>
     
-    <audio id="success-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
     <script>
-        // 🚀 [원복] 7가지 단순 질문 배열 수정
-        const questions = ["What was the dominant hue of the atmosphere?", "Which emotion lingered upon awakening?", "Were you an observer or the architect?", "Was the gravity of the space heavy or absent?", "What singular object felt most alive?", "Did you recognize yourself in the sequence?", "How did the dream dissolve into reality?"];
+        // 🇰🇷 7가지 질문 한국어 버전
+        const questions = [
+            "그곳을 지배하던 공기의 색깔은 무엇이었나요?", 
+            "잠에서 깨어났을 때 피부에 맴돌던 감정은 무엇이었나요?", 
+            "당신은 관찰자였나요, 아니면 그곳을 설계한 자였나요?", 
+            "그곳의 중력은 무겁게 짓눌렀나요, 아니면 아예 존재하지 않았나요?", 
+            "어떤 사물이 소름 끼칠 정도로 살아있다고 느껴졌나요?", 
+            "그 기묘한 흐름 속에서 당신 스스로를 알아볼 수 있었나요?", 
+            "그 꿈은 어떻게 부서지며 현실로 돌아왔나요?"
+        ];
         let currentStep = 0; let userAnswers = [];
         function nextStep(n) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); setTimeout(() => { const target = document.getElementById('step-' + n); if(target) target.classList.add('active'); }, 100); }
-        function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 10 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 10 ? "auto" : "none"; }
+        function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 2 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 2 ? "auto" : "none"; }
         
         async function handleQuestion() {
             const input = document.getElementById('answer-input'); userAnswers.push(input.value); currentStep++;
             if(currentStep < questions.length) {
                 document.getElementById('question-text').innerHTML = questions[currentStep];
-                input.value = ""; document.getElementById('progress').innerText = `Inquiry 0${currentStep + 1} / 07`; checkLength();
+                input.value = ""; document.getElementById('progress').innerText = `질문 0${currentStep + 1} / 07`; checkLength();
             } else {
                 nextStep(3);
                 try {
                     const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: userAnswers }) });
+                    if (!res.ok) throw new Error("서버 응답 오류");
                     const data = await res.json();
                     
                     document.getElementById('final-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
-                    document.getElementById('rarity-text').innerText = `RARITY: ${data.rarity}`;
-                    document.getElementById('report-title').innerText = `Dossier: ${data.report.title}`;
-                    
-                    // 💸 미리보기 로직 삭제, 전체 본문 할당
+                    document.getElementById('rarity-text').innerText = `희귀도: ${data.rarity}`;
+                    document.getElementById('report-title').innerText = data.report.title;
                     document.getElementById('report-summary').innerText = data.report.summary;
 
                     document.getElementById('card-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
-                    document.getElementById('card-rarity').innerText = `RARITY: ${data.rarity}`;
+                    document.getElementById('card-rarity').innerText = `희귀도: ${data.rarity}`;
                     document.getElementById('card-title').innerText = data.report.title;
                     
                     document.getElementById('analyzing-text').classList.add('hidden');
-                    
-                    // 🚀 분석 완료 후 결과 화면으로 이동 (결제 대기 없음)
                     setTimeout(() => nextStep(4), 1000);
                 } catch(e) { console.error(e); nextStep(4); }
             }
         }
 
-        // 💸 unlockSubconsciousArtifact 함수 및 페이팔 버튼 렌더링 로직 삭제됨
-
         function saveSubconsciousArtifact() {
             const btn = document.getElementById('save-card-btn'); 
             const originalText = btn.innerText;
-            btn.innerText = "Processing Artifact...";
+            btn.innerText = "카드 생성 중...";
             html2canvas(document.getElementById('artifact-card-to-capture'), { backgroundColor: '#030308', scale: 1 }).then(canvas => {
                 const link = document.createElement('a'); link.download = 'REMNANT_Artifact.png'; link.href = canvas.toDataURL(); link.click(); 
                 btn.innerText = originalText;
