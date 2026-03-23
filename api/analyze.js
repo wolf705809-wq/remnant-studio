@@ -1,3 +1,4 @@
+// api/analyze.js - Auto-Detect Model & Korean JSON
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
   const { answers } = req.body;
@@ -5,7 +6,35 @@ export default async function handler(req, res) {
 
   if (!apiKey) return res.status(500).json({ error: "API Key Missing" });
 
-  const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  // 🚀 1. 이 API 키로 쓸 수 있는 모델 리스트를 먼저 가져옵니다.
+  const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+  let bestModel = "models/gemini-pro"; // 만약을 대비한 가장 안정적인 기본 모델
+
+  try {
+    const listRes = await fetch(listUrl);
+    const listData = await listRes.json();
+    
+    if (listData.models) {
+      // 텍스트 생성(generateContent)이 가능하고, 시각(vision) 모델이 아닌 것만 추려냅니다.
+      const validModels = listData.models.filter(m => 
+        m.supportedGenerationMethods?.includes("generateContent") && 
+        !m.name.includes("vision")
+      );
+
+      // 쓸 수 있는 모델 중 최신 flash나 pro 모델을 찾아서 자동 지정합니다.
+      const foundModel = validModels.find(m => m.name.includes("gemini-1.5-flash"))?.name || 
+                         validModels.find(m => m.name.includes("gemini-pro"))?.name ||
+                         validModels[0]?.name;
+                         
+      if (foundModel) bestModel = foundModel;
+      console.log("자동 선택된 안전한 모델:", bestModel);
+    }
+  } catch (e) {
+    console.warn("모델 탐색 실패, 기본 모델로 강제 진행합니다.");
+  }
+
+  // 🚀 2. 찾아낸 안전한 모델로 분석을 요청합니다.
+  const apiURL = `https://generativelanguage.googleapis.com/v1beta/${bestModel}:generateContent?key=${apiKey}`;
 
   const promptData = {
     contents: [{
@@ -25,9 +54,8 @@ export default async function handler(req, res) {
         }`
       }]
     }],
-    // 🚀 [핵심] AI가 무조건 순수한 JSON 형식으로만 대답하도록 강제합니다. (에러 방지)
     generationConfig: {
-      responseMimeType: "application/json"
+      responseMimeType: "application/json" // 🚀 [필수] 무조건 JSON으로만 답하게 강제
     }
   };
 
@@ -41,7 +69,6 @@ export default async function handler(req, res) {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error?.message || "구글 서버 응답 오류");
 
-    // responseMimeType 덕분에 텍스트 추출 후 바로 파싱 가능
     const jsonText = data.candidates[0].content.parts[0].text;
     res.status(200).json(JSON.parse(jsonText));
 
