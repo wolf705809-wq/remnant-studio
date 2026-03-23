@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMNANT | Subconscious Analysis Studio</title>
+    <title>REMNANT | Premium Subconscious Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD&locale=en_US"></script>
     <style>
         :root { --bg: #030308; --c1: rgba(99, 102, 241, 0.25); --c2: rgba(236, 72, 153, 0.2); }
@@ -22,6 +23,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .neural-node { width: 4px; height: 4px; background: white; border-radius: 50%; position: absolute; filter: blur(1px); animation: pulse 2s infinite alternate; }
         @keyframes pulse { from { opacity: 0.2; transform: scale(1); } to { opacity: 1; transform: scale(1.5); } }
+        /* 결과 잠금 해제 효과 */
         .blur-report { filter: blur(25px); opacity: 0.4; transition: all 3s cubic-bezier(0.19, 1, 0.22, 1); pointer-events: none; }
         .blur-report.unlocked { filter: blur(0px); opacity: 1; pointer-events: auto; }
         .payment-overlay { transition: all 1.5s ease; }
@@ -32,7 +34,6 @@
 </head>
 <body class="h-screen w-screen relative">
     <div class="aurora" id="aurora-bg"></div>
-    
     <nav class="fixed top-0 w-full flex justify-between items-center px-12 py-10 z-50">
         <div class="text-2xl font-light tracking-[0.5em] serif italic">REMNANT</div>
         <div class="text-[9px] tracking-[0.5em] opacity-40">BEYOND THE NIGHT</div>
@@ -41,7 +42,7 @@
     <section id="step-1" class="step active flex-col items-center justify-center h-full text-center z-10">
         <div class="space-y-12 mb-20">
             <p class="serif text-2xl italic font-light opacity-40">"The dream is the royal road..."</p>
-            <h2 class="serif text-5xl md:text-7xl italic font-light leading-[1.1]">Cathedral of <span class="text-indigo-300">Symbols.</span></h2>
+            <h2 class="serif text-5xl md:text-7xl italic font-light">Cathedral of <span class="text-indigo-300">Symbols.</span></h2>
         </div>
         <button onclick="nextStep(2)" class="btn-luxury px-20 py-6">Recite Your Dream</button>
     </section>
@@ -68,15 +69,14 @@
             <div>
                 <span id="rarity-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase">ANALYZING...</span>
                 <h2 id="final-keywords" class="serif text-8xl md:text-[9rem] italic keyword-giant">--<br>--<br>--</h2>
+                <button id="save-card-btn" onclick="saveArtifactAsImage()" class="btn-luxury px-10 py-4 mt-16 opacity-0 pointer-events-none transition-all duration-1000">Save Artifact Card</button>
             </div>
-
-            <div class="glass p-12 relative overflow-hidden h-[600px] flex flex-col rounded-sm">
+            <div id="report-card-container" class="glass p-12 relative overflow-hidden h-[600px] flex flex-col rounded-sm">
                 <div id="report-content" class="blur-report space-y-12">
                     <h3 id="report-title" class="serif text-4xl italic">Dossier: Pending</h3>
-                    <p id="report-summary" class="text-[11px] leading-loose">Awaiting subconscious artifacts...</p>
-                    <div class="h-48 bg-white/5 rounded-sm flex items-center justify-center italic text-[10px] opacity-20 tracking-widest uppercase">Generative Artifact Pending</div>
+                    <p id="report-summary" class="text-[10px] leading-loose opacity-60">Awaiting subconscious artifacts...</p>
+                    <div class="h-40 bg-white/5 rounded-sm flex items-center justify-center italic text-[9px] opacity-20 tracking-widest uppercase">Generative Artifact Pending</div>
                 </div>
-
                 <div id="payment-overlay" class="payment-overlay absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-xl p-12 text-center">
                     <h4 class="serif text-3xl italic mb-6">Own Your Artifact</h4>
                     <p class="text-[10px] tracking-widest opacity-60 mb-12 uppercase">Unlock the full 12-page Dossier <br> & high-resolution generative artifact.</p>
@@ -92,7 +92,6 @@
         function nextStep(n) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); setTimeout(() => document.getElementById(`step-${n}`).classList.add('active'), 100); }
         function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 12 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 12 ? "auto" : "none"; }
 
-        // 🛠️ 보강된 질문 처리 로직
         async function handleQuestion() {
             userAnswers.push(document.getElementById('answer-input').value);
             currentStep++;
@@ -102,30 +101,23 @@
                 document.getElementById('progress').innerText = `Inquiry 0${currentStep + 1} / 07`;
                 checkLength();
             } else {
-                nextStep(3); // 로딩 시작
+                nextStep(3);
                 const loadingTexts = ["Isolating Archetypes...", "Calculating Neural Resonance...", "Finalizing Synthesis..."];
                 let i = 0; const interval = setInterval(() => { if(i < loadingTexts.length) document.getElementById('loading-text').innerText = loadingTexts[i++]; }, 1500);
 
                 try {
                     const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: userAnswers }) });
-                    
-                    // 🚀 여기에 '실패 시 catch로 던지기' 로직 추가 완료
-                    if (!res.ok) throw new Error("AI 통신 실패");
-                    
+                    if (!res.ok) throw new Error("AI 분석 실패");
                     const data = await res.json();
-                    
-                    // 🔓 데이터 입히기
                     document.getElementById('final-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
                     document.getElementById('rarity-text').innerText = `RARITY: ${data.rarity} - COSMIC SYMBOLISM`;
                     document.getElementById('report-title').innerText = `Dossier: ${data.report.title}`;
                     document.getElementById('report-summary').innerText = data.report.summary;
-                    
                     clearInterval(interval);
-                    setTimeout(() => nextStep(4), 1000); // 🚀 성공했을 때만 이동!
+                    setTimeout(() => nextStep(4), 1000);
                 } catch(e) { 
                     clearInterval(interval);
-                    // 🚨 실패하면 결과 화면 안 가고 알림창 띄우기
-                    alert("The void is unresponsive. (Please check API Key or try again later)");
+                    alert("The void is unresponsive. (API 키 또는 서버 설정을 확인해주세요)");
                     nextStep(1); 
                 }
             }
@@ -134,7 +126,22 @@
         function unlockReport() {
             document.getElementById('payment-overlay').classList.add('hidden');
             document.getElementById('report-content').classList.add('unlocked');
-            alert("Subconscious Artifact Unlocked. Welcome to the depth.");
+            const saveBtn = document.getElementById('save-card-btn');
+            saveBtn.style.opacity = "1"; saveBtn.style.pointerEvents = "auto";
+            alert("Subconscious Artifact Unlocked.");
+        }
+
+        function saveArtifactAsImage() {
+            const container = document.getElementById('report-card-container');
+            const saveBtn = document.getElementById('save-card-btn');
+            saveBtn.innerText = "Processing...";
+            html2canvas(container, { backgroundColor: '#030308', scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'REMNANT_Artifact.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                saveBtn.innerText = "Save Artifact Card";
+            });
         }
 
         paypal.Buttons({
