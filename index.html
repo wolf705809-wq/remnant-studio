@@ -3,57 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMNANT | 무의식 보관소</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <title>REMNANT | AI 무의식 꿈 해몽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-    <link href="[https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap](https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap)" rel="stylesheet">
-    <link rel="stylesheet" as="style" crossorigin href="[https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css](https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css)" />
-    <script src="[https://html2canvas.hertzen.com/dist/html2canvas.min.js](https://html2canvas.hertzen.com/dist/html2canvas.min.js)"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     
     <style>
-        :root { --bg: #05050A; --c1: rgba(99, 102, 241, 0.2); --c2: rgba(236, 72, 153, 0.15); --gold: #E5C38B; }
-        body { background-color: var(--bg); color: #ffffff; font-family: 'Pretendard', sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; word-break: keep-all; }
+        :root { 
+            --bg: #030305; 
+            --c1: rgba(99, 102, 241, 0.15); 
+            --c2: rgba(236, 72, 153, 0.1); 
+            --gold: #E5C38B; 
+            --surface: rgba(255, 255, 255, 0.03);
+        }
+        body { background-color: var(--bg); color: #f3f4f6; font-family: 'Pretendard', sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; word-break: keep-all; }
         
-        /* 🇰🇷 명조체 클래스 분리 */
         .serif { font-family: 'Nanum Myeongjo', serif; }
         
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('[https://grainy-gradients.vercel.app/noise.svg](https://grainy-gradients.vercel.app/noise.svg)'); opacity: 0.05; z-index: 100; pointer-events: none; }
-        .aurora { position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1; background: radial-gradient(circle at 20% 30%, var(--c1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, var(--c2) 0%, transparent 50%); filter: blur(90px); transition: all 4s ease; animation: drift 40s infinite alternate linear; }
-        @keyframes drift { from { transform: rotate(0deg) scale(1); } to { transform: rotate(10deg) scale(1.1); } }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://grainy-gradients.vercel.app/noise.svg'); opacity: 0.04; z-index: 100; pointer-events: none; }
+        .aurora { position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1; background: radial-gradient(circle at 20% 30%, var(--c1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, var(--c2) 0%, transparent 50%); filter: blur(100px); transition: transform 4s ease; animation: drift 30s infinite alternate ease-in-out; }
+        @keyframes drift { from { transform: rotate(0deg) scale(1); } to { transform: rotate(5deg) scale(1.05); } }
         
-        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        /* 세련된 유리 질감 */
+        .glass { background: var(--surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
         
-        /* 버튼 디자인 정제 */
-        .btn-luxury { background: #ffffff; color: #000; letter-spacing: 0.05em; font-size: 0.9rem; font-weight: 500; transition: all 0.5s ease; cursor: pointer; display: inline-block; border-radius: 4px; }
-        .btn-luxury:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2); }
+        /* 버튼 디테일 업그레이드 */
+        .btn-luxury { background: linear-gradient(180deg, #ffffff 0%, #e5e7eb 100%); color: #000; letter-spacing: 0.05em; font-size: 0.95rem; font-weight: 600; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; display: inline-block; border-radius: 8px; box-shadow: 0 4px 14px 0 rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.8); }
+        .btn-luxury:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25); background: #ffffff; }
+        .btn-luxury:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .step { display: none; opacity: 0; height: 100vh; width: 100%; flex-direction: column; align-items: center; justify-content: center; }
-        .step.active { display: flex; animation: fadeIn 1.5s forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .step.active { display: flex; animation: fadeIn 1s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         
-        .neural-node { width: 3px; height: 3px; background: white; border-radius: 50%; position: absolute; filter: blur(1px); animation: pulse 2s infinite alternate; }
-        @keyframes pulse { from { opacity: 0.2; transform: scale(1); } to { opacity: 0.8; transform: scale(1.5); } }
+        .neural-node { width: 4px; height: 4px; background: rgba(255,255,255,0.8); border-radius: 50%; position: absolute; box-shadow: 0 0 10px rgba(255,255,255,0.5); animation: pulse 2s infinite alternate; }
+        @keyframes pulse { from { opacity: 0.3; transform: scale(0.8); } to { opacity: 1; transform: scale(1.5); } }
         
-        /* 🇰🇷 키워드 텍스트 최적화 (행간 및 그라데이션) */
-        .keyword-giant { line-height: 1.3; letter-spacing: -0.03em; background: linear-gradient(to bottom, #ffffff 30%, rgba(255,255,255,0.3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .keyword-giant { line-height: 1.2; letter-spacing: -0.04em; background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 4px 20px rgba(165, 180, 252, 0.15)); }
+
+        /* 입력창 포커스 효과 */
+        .input-glow:focus { border-color: rgba(129, 140, 248, 0.6); box-shadow: 0 10px 30px -10px rgba(129, 140, 248, 0.2); background: rgba(255,255,255,0.02); }
+
+        /* 진행 상태바 */
+        .progress-bar-container { width: 100%; max-width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin: 0 auto 2rem auto; border-radius: 2px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: #818cf8; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 
         @media (max-width: 768px) {
             .nav-item { display: none; }
-            .step-4-layout { flex-direction: column !important; gap: 2rem !important; margin-top: 2rem !important;}
-            .keyword-giant { font-size: 3rem !important; line-height: 1.2; }
-            #report-card-container { height: auto !important; max-height: 50vh; padding: 1.5rem !important; }
-            #question-text { font-size: 1.5rem !important; line-height: 1.4 !important; }
+            .step-4-layout { flex-direction: column !important; gap: 2rem !important; margin-top: 1rem !important;}
+            .keyword-giant { font-size: 3.5rem !important; }
+            #report-card-container { height: auto !important; max-height: 55vh; padding: 1.5rem !important; border-radius: 16px; }
+            #question-text { font-size: 1.6rem !important; line-height: 1.5 !important; }
         }
 
-        /* 🇰🇷 리포트 본문 줄간격(행간) 및 자간 최적화 */
-        .report-summary { font-size: 0.95rem; font-weight: 300; line-height: 1.8; letter-spacing: -0.01em; color: rgba(255,255,255,0.85); white-space: pre-wrap; }
+        .report-summary { font-size: 1rem; font-weight: 300; line-height: 1.8; letter-spacing: -0.02em; color: rgba(255,255,255,0.85); white-space: pre-wrap; }
 
-        .custom-scroll::-webkit-scrollbar { width: 3px; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
         
         #artifact-card-hidden-container { position: fixed; top: -3000px; left: -3000px; z-index: -1000; }
         .artifact-card-luxury { width: 1080px; height: 1920px; background: #05050A; padding: 120px 100px; display: flex; flex-direction: column; justify-content: space-between; border: 12px solid #111; position: relative; text-align: center; }
@@ -63,47 +76,54 @@
 <body>
     <div class="aurora"></div>
     <nav class="fixed top-0 w-full flex justify-between items-center px-8 md:px-12 py-8 z-50">
-        <div class="text-xl font-medium tracking-[0.3em] serif nav-item">REMNANT</div>
-        <div class="text-[10px] tracking-[0.2em] opacity-40 nav-item">무의식 보관소</div>
+        <div class="text-xl font-semibold tracking-[0.2em] serif nav-item">REMNANT</div>
+        <div class="text-[11px] tracking-[0.1em] opacity-50 nav-item font-light text-indigo-200">AI 프리미엄 꿈 해몽</div>
     </nav>
     
     <section id="step-1" class="step active px-6 text-center">
-        <div class="space-y-8 mb-16">
-            <p class="text-sm md:text-base font-light opacity-50 tracking-widest">가장 깊은 곳에 숨겨둔 당신의 조각</p>
-            <h2 class="serif text-4xl md:text-6xl font-bold leading-tight">잊혀진 내면의 <span class="text-indigo-300">목소리</span></h2>
+        <div class="space-y-6 mb-16">
+            <p class="text-sm md:text-base font-medium tracking-[0.2em] text-indigo-300/80">단 7개의 질문으로 완성되는 AI 꿈 해몽</p>
+            <h2 class="serif text-5xl md:text-7xl font-bold leading-tight">당신의 꿈이 보내는 <br><span class="text-white/80 font-light italic">내면의 시그널</span></h2>
         </div>
-        <button onclick="nextStep(2)" class="btn-luxury px-12 py-4 shadow-lg">분석 시작하기</button>
+        <button onclick="nextStep(2)" class="btn-luxury px-12 py-4">꿈 해석 시작하기</button>
     </section>
     
     <section id="step-2" class="step px-6 w-full max-w-2xl mx-auto text-center">
-        <span id="progress" class="text-[11px] tracking-[0.3em] text-indigo-400 mb-8 font-medium">기억의 파편 01 / 07</span>
-        <h3 id="question-text" class="serif text-2xl md:text-4xl mb-12 leading-normal">그 공간을 감싸고 있던 공기의 온도나 분위기는 어땠나요?</h3>
-        <input id="answer-input" type="text" oninput="checkLength()" placeholder="떠오르는 대로 편하게 적어주세요..." class="bg-transparent border-b border-white/20 w-full py-4 text-lg md:text-xl font-light text-center focus:outline-none focus:border-indigo-400 transition-colors">
-        <button id="next-btn" onclick="handleQuestion()" class="btn-luxury px-10 py-3 mt-16 opacity-20 pointer-events-none">다음 질문</button>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar-fill"></div>
+        </div>
+        <span id="progress-text" class="text-[12px] tracking-[0.2em] text-indigo-300/80 mb-10 block font-light">기억의 파편 01 / 07</span>
+        
+        <h3 id="question-text" class="serif text-3xl md:text-4xl mb-12 leading-normal font-medium">그 공간을 감싸고 있던 공기의 온도나 분위기는 어땠나요?</h3>
+        
+        <input id="answer-input" type="text" oninput="checkLength()" placeholder="떠오르는 대로 편하게 적어주세요..." class="input-glow bg-transparent border-b border-white/20 w-full py-5 px-4 text-lg md:text-xl font-light text-center focus:outline-none transition-all duration-300 rounded-t-md">
+        
+        <button id="next-btn" onclick="handleQuestion()" class="btn-luxury px-10 py-3 mt-16 disabled:opacity-20 transition-all duration-500" disabled>다음 질문</button>
     </section>
     
     <div id="step-3" class="step">
-        <div class="relative w-48 h-48 mb-10">
-            <div class="neural-node" style="top:30%; left:30%; animation-delay: 0.1s;"></div>
-            <div class="neural-node" style="top:60%; left:70%; animation-delay: 0.4s;"></div>
-            <div class="neural-node" style="top:20%; left:80%; animation-delay: 0.7s;"></div>
-            <div class="absolute inset-0 border border-white/10 rounded-full" style="animation: spin 10s linear infinite;"></div>
+        <div class="relative w-40 h-40 mb-12">
+            <div class="neural-node" style="top:25%; left:25%; animation-delay: 0s;"></div>
+            <div class="neural-node" style="top:65%; left:75%; animation-delay: 0.3s;"></div>
+            <div class="neural-node" style="top:20%; left:80%; animation-delay: 0.6s;"></div>
+            <div class="absolute inset-0 border-[1.5px] border-indigo-400/20 rounded-full" style="animation: spin 8s linear infinite;"></div>
+            <div class="absolute inset-4 border-[1px] border-white/10 rounded-full" style="animation: spin 12s linear infinite reverse;"></div>
         </div>
-        <p class="text-[12px] tracking-[0.3em] opacity-60 font-light">무의식의 결을 해석하는 중...</p>
+        <p class="text-[13px] tracking-[0.2em] text-indigo-200/70 font-light">꿈의 조각들을 연결하는 중...</p>
     </div>
     
     <section id="step-4" class="step px-6 md:px-12 w-full">
         <div class="flex flex-row step-4-layout items-start justify-between w-full max-w-6xl mx-auto gap-8 md:gap-16">
-            <div class="w-full md:w-5/12 flex flex-col justify-center text-center md:text-left">
-                <span id="rarity-text" class="text-[12px] tracking-[0.2em] text-indigo-300 font-medium mb-4">성향 분석 중</span>
-                <h2 id="final-keywords" class="serif text-4xl md:text-6xl keyword-giant font-bold mb-8">공허<br>벨벳<br>메아리</h2>
-                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-8 py-3 mx-auto md:mx-0 w-max shadow-md">인스타그램 카드 저장</button>
+            <div class="w-full md:w-5/12 flex flex-col justify-center text-center md:text-left pt-4 md:pt-10">
+                <span id="rarity-text" class="text-[13px] tracking-[0.1em] text-indigo-300 font-medium mb-3 opacity-80">성향 분석 중</span>
+                <h2 id="final-keywords" class="serif text-5xl md:text-7xl keyword-giant font-bold mb-10">공허<br>벨벳<br>메아리</h2>
+                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-8 py-3 mx-auto md:mx-0 w-max">인스타그램 결과 저장</button>
             </div>
             
-            <div id="report-card-container" class="w-full md:w-7/12 glass p-6 md:p-10 relative h-[450px] md:h-[550px] flex flex-col rounded-lg">
-                <div id="report-content" class="h-full custom-scroll pr-4 overflow-y-auto">
-                    <h3 id="report-title" class="serif text-2xl md:text-3xl text-white font-bold mb-6">해석 리포트 생성 중...</h3>
-                    <div class="w-8 h-[1px] bg-indigo-400/50 mb-6"></div>
+            <div id="report-card-container" class="w-full md:w-7/12 glass p-6 md:p-10 relative h-[500px] md:h-[600px] flex flex-col rounded-2xl">
+                <div id="report-content" class="h-full custom-scroll pr-5 overflow-y-auto">
+                    <h3 id="report-title" class="serif text-2xl md:text-3xl text-white font-bold mb-6 leading-snug">해석 리포트 생성 중...</h3>
+                    <div class="w-10 h-[2px] bg-gradient-to-r from-indigo-400 to-transparent mb-8"></div>
                     <p id="report-summary" class="report-summary"></p>
                 </div>
             </div>
@@ -113,15 +133,15 @@
     <div id="artifact-card-hidden-container">
         <div id="artifact-card-to-capture" class="artifact-card-luxury text-center">
             <div class="space-y-6">
-                <div class="text-[24px] tracking-[0.4em] opacity-40 font-light">REMNANT | 무의식 보관소</div>
-                <div class="w-[80%] h-[1px] bg-white/10 my-10 mx-auto"></div>
-                <div id="card-rarity" class="serif text-[26px] tracking-[0.1em] text-indigo-300 font-bold">유형: 분석 중</div>
+                <div class="text-[26px] tracking-[0.3em] opacity-50 font-light text-indigo-100">REMNANT | AI 프리미엄 꿈 해몽</div>
+                <div class="w-[70%] h-[1px] bg-white/10 my-10 mx-auto"></div>
+                <div id="card-rarity" class="serif text-[28px] tracking-[0.1em] text-indigo-300 font-bold">유형: 분석 중</div>
             </div>
-            <h1 id="card-keywords" class="serif text-[130px] leading-[1.2] keyword-giant mt-[100px]">공허<br>벨벳<br>메아리</h1>
+            <h1 id="card-keywords" class="serif text-[140px] leading-[1.1] keyword-giant mt-[120px]">공허<br>벨벳<br>메아리</h1>
             <div class="space-y-10 mt-auto">
-                <p id="card-title" class="serif text-[42px] opacity-90 font-bold">무의식의 방</p>
-                <div class="w-12 h-[2px] bg-indigo-400 mx-auto"></div>
-                <p class="text-[18px] tracking-[0.4em] opacity-30 font-light">REMNANT-STUDIO.VERCEL.APP</p>
+                <p id="card-title" class="serif text-[46px] opacity-90 font-bold">무의식의 방</p>
+                <div class="w-16 h-[2px] bg-indigo-400 mx-auto"></div>
+                <p class="text-[20px] tracking-[0.4em] opacity-40 font-light">REMNANT-STUDIO.VERCEL.APP</p>
             </div>
         </div>
     </div>
@@ -140,14 +160,27 @@
         
         function nextStep(n) { 
             document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); 
-            setTimeout(() => { const target = document.getElementById('step-' + n); if(target) target.classList.add('active'); }, 50); 
+            setTimeout(() => { 
+                const target = document.getElementById('step-' + n); 
+                if(target) target.classList.add('active'); 
+                if(n === 2) updateProgress(); // 첫 질문 시작 시 프로그레스 바 초기화
+            }, 50); 
         }
         
+        function updateProgress() {
+            const progressPercent = ((currentStep) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent === 0 ? 5 : progressPercent}%`;
+            document.getElementById('progress-text').innerText = `기억의 파편 0${currentStep + 1} / 07`;
+        }
+
         function checkLength() { 
             const val = document.getElementById('answer-input').value; 
             const btn = document.getElementById('next-btn'); 
-            btn.style.opacity = val.length >= 2 ? "1" : "0.2"; 
-            btn.style.pointerEvents = val.length >= 2 ? "auto" : "none"; 
+            if (val.length >= 2) {
+                btn.removeAttribute('disabled');
+            } else {
+                btn.setAttribute('disabled', 'true');
+            }
         }
         
         async function handleQuestion() {
@@ -158,7 +191,7 @@
             if(currentStep < questions.length) {
                 document.getElementById('question-text').innerHTML = questions[currentStep];
                 input.value = ""; 
-                document.getElementById('progress').innerText = `기억의 파편 0${currentStep + 1} / 07`; 
+                updateProgress();
                 checkLength();
             } else {
                 nextStep(3);
@@ -171,10 +204,7 @@
                     
                     const data = await res.json();
                     
-                    // 🚀 에러 발생 시 명확하게 프론트엔드에서 알림
-                    if (!res.ok || data.error) {
-                        throw new Error(data.error || "서버에서 응답을 처리하지 못했습니다.");
-                    }
+                    if (!res.ok || data.error) throw new Error(data.error || "서버 응답 오류");
                     
                     document.getElementById('final-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
                     document.getElementById('rarity-text').innerText = `성향: ${data.rarity}`;
@@ -187,8 +217,8 @@
                     
                     setTimeout(() => nextStep(4), 1000);
                 } catch(e) { 
-                    console.error("에러 발생:", e.message);
                     alert(`분석 중 문제가 발생했습니다: ${e.message}\n잠시 후 다시 시도해주세요.`);
+                    currentStep = 0; userAnswers = [];
                     nextStep(1); 
                 }
             }
@@ -198,10 +228,10 @@
             const btn = document.getElementById('save-card-btn'); 
             const originalText = btn.innerText;
             btn.innerText = "이미지 렌더링 중...";
+            btn.setAttribute('disabled', 'true');
             
-            // 모바일 환경에서도 고해상도로 깔끔하게 저장되도록 scale 상향 조정
             html2canvas(document.getElementById('artifact-card-to-capture'), { 
-                backgroundColor: '#05050A', 
+                backgroundColor: '#030305', 
                 scale: 2, 
                 useCORS: true 
             }).then(canvas => {
@@ -210,6 +240,7 @@
                 link.href = canvas.toDataURL("image/png", 1.0); 
                 link.click(); 
                 btn.innerText = originalText;
+                btn.removeAttribute('disabled');
             });
         }
     </script>
