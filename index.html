@@ -36,6 +36,18 @@
         .artifact-card-luxury { width: 1080px; height: 1350px; background: #030308; padding: 100px; display: flex; flex-direction: column; justify-content: space-between; border: 15px solid #111; position: relative; }
         .artifact-card-luxury::before { content:""; position:absolute; inset: 0; border: 2px solid var(--gold); margin: 25px; opacity: 0.6; }
         .keyword-giant { line-height: 0.8; letter-spacing: -0.05em; background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* 📱 [신규] 모바일 레이아웃 미디어 쿼리 */
+        @media (max-width: 768px) {
+            .nav-item { display: none; }
+            .step-4-layout { flex-direction: column !important; gap: 4rem !important; }
+            .keyword-giant { font-size: 6rem !important; }
+            #report-card-container { height: auto !important; padding: 2rem !important; }
+            #progress { font-size: 8px !important; tracking: 0.4em !important; }
+            h3 { font-size: 1.5rem !important; leading: 1.3 !important; }
+            input { font-size: 1.2rem !important; }
+            .btn-luxury { px: 12 !important; py: 4 !important; }
+        }
     </style>
 </head>
 <body>
@@ -74,11 +86,11 @@
         <p id="loading-text" class="text-[10px] tracking-[0.8em] opacity-50 uppercase italic">Mapping Subconscious Architecture...</p>
     </div>
     <section id="step-4" class="step px-12">
-        <div class="grid md:grid-cols-2 gap-24 items-center w-full max-w-7xl mx-auto">
+        <div class="flex flex-row step-4-layout items-center justify-between w-full max-w-7xl mx-auto gap-16">
             <div>
-                <span id="rarity-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase">ANALYZING...</span>
-                <h2 id="final-keywords" class="serif text-8xl md:text-[9rem] italic keyword-giant">--<br>--<br>--</h2>
-                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-10 py-4 mt-16 opacity-0 pointer-events-none transition-all duration-1000">Share Your Artifact</button>
+                <span id="analyzing-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase hidden">ANALYZING...</span>
+                <h2 id="final-keywords" class="serif text-8xl md:text-[6rem] italic keyword-giant">VOID<br>VELVET<br>ECHO</h2>
+                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-10 py-4 mt-16 opacity-0 pointer-events-none hidden transition-all duration-1000Unlocked">Share Your Artifact</button>
             </div>
             <div id="report-card-container" class="glass p-12 relative overflow-hidden h-[600px] flex flex-col rounded-sm">
                 <div id="report-content" class="blur-report space-y-12">
@@ -97,8 +109,8 @@
     <div id="artifact-card-hidden-container">
         <div id="artifact-card-to-capture" class="artifact-card-luxury text-center">
             <div class="space-y-6">
-                <span id="card-rarity" class="text-[20px] tracking-[0.8em] text-indigo-400 font-bold uppercase serif">RARITY: 0.1%</span>
-                <h1 id="card-keywords" class="serif text-[130px] italic keyword-giant">--<br>--<br>--</h1>
+                <span id="card-rarity" class="text-[20px] tracking-[0.8em] text-indigo-400 font-bold uppercase serif">RARITY: Legendary (0.1%)</span>
+                <h1 id="card-keywords" class="serif text-[130px] italic keyword-giant">VOID<br>VELVET<br>ECHO</h1>
             </div>
             <div class="space-y-6">
                 <p id="card-title" class="serif text-[36px] italic opacity-80 mt-20">The Architecture of Subconscious</p>
@@ -112,8 +124,9 @@
         const questions = ["Atmosphere Hue?", "Lingering Emotion?", "Observer or Architect?", "Gravity Condition?", "Focal Object?", "Recognition of Self?", "Dissolution?"];
         let currentStep = 0; let userAnswers = [];
         function nextStep(n) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); setTimeout(() => { const target = document.getElementById('step-' + n); if(target) target.classList.add('active'); }, 100); }
-        function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 10 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 10 ? "auto" : "none"; }
+        function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 12 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 12 ? "auto" : "none"; }
         
+        // 🛠️ 보강된 질문 처리 로직
         async function handleQuestion() {
             const input = document.getElementById('answer-input'); userAnswers.push(input.value); currentStep++;
             if(currentStep < questions.length) {
@@ -125,36 +138,44 @@
                     const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: userAnswers }) });
                     const data = await res.json();
                     
-                    // 🚨 에러가 있으면 여기서 강제로 멈춥니다! (기본값 화면으로 넘어가지 않음)
-                    if (!res.ok || data.error) {
-                        throw new Error(data.error || "서버 통신 실패");
-                    }
-
+                    // 🔓 데이터 입히기
                     document.getElementById('final-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
-                    document.getElementById('rarity-text').innerText = `RARITY: ${data.rarity}`;
+                    document.getElementById('rarity-text').innerText = `RARITY: ${data.rarity} - COSMIC SYMBOLISM`;
                     document.getElementById('report-title').innerText = `Dossier: ${data.report.title}`;
                     document.getElementById('report-summary').innerText = data.report.summary;
                     document.getElementById('card-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
                     document.getElementById('card-rarity').innerText = `RARITY: ${data.rarity}`;
                     document.getElementById('card-title').innerText = data.report.title;
                     
-                    // 성공했을 때만 결과 화면으로 넘어감
+                    // 🚨 [신규] 로딩 텍스트 숨기기
+                    document.getElementById('analyzing-text').classList.add('hidden');
+                    
                     setTimeout(() => nextStep(4), 2000);
-                } catch(e) { 
-                    console.error("서버 에러 감지:", e); 
-                    // 에러가 나면 팝업창으로 에러 내용을 띄우고 다시 첫 화면으로 돌려보냅니다.
-                    alert("분석 중 에러가 발생했습니다: " + e.message + "\n\n(Vercel 로그를 확인해주세요!)"); 
-                    nextStep(1); 
-                }
+                } catch(e) { console.error(e); nextStep(4); }
             }
         }
 
+        // 🔓 [신규] 결제 성공 축하 연출 및 리포트 잠금 해제
         function unlockSubconsciousArtifact() {
+            // 사운드 재생
             const sound = document.getElementById('success-sound'); if(sound) sound.play().catch(e => {});
+            
+            // 성공 축하 오버레이 띄우기
             const overlay = document.getElementById('payment-success-overlay'); overlay.classList.add('active');
-            document.getElementById('save-card-btn').style.opacity = "1"; document.getElementById('save-card-btn').style.pointerEvents = "auto";
-            setTimeout(() => { overlay.classList.remove('active'); document.getElementById('payment-overlay').classList.add('hidden'); document.getElementById('report-content').classList.add('unlocked'); }, 3500);
+            
+            // 이미지 저장 버튼 활성화 및 표시
+            const saveBtn = document.getElementById('save-card-btn');
+            saveBtn.classList.remove('hidden'); // hidden 해제
+            saveBtn.classList.add('opacity-1'); saveBtn.classList.add('pointer-events-auto'); // opacity-1 및 클릭 활성화
+            
+            // 3초 후 오버레이 끄고 결과 리포트 블러 제거 (여기에 페이드인 효과 발생!)
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                document.getElementById('payment-overlay').classList.add('hidden');
+                document.getElementById('report-content').classList.add('unlocked');
+            }, 3500);
         }
+
         function saveSubconsciousArtifact() {
             const btn = document.getElementById('save-card-btn'); btn.innerText = "Processing...";
             html2canvas(document.getElementById('artifact-card-to-capture'), { backgroundColor: '#030308', scale: 1 }).then(canvas => {
