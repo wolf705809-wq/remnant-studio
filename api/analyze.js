@@ -1,21 +1,20 @@
-// api/analyze.js - REMNANT MASTER DEBUG (최종)
+// api/analyze.js - REMNANT FINAL STABLE (v1)
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
   const { answers } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
 
-  console.log("--- 서버 시작 ---");
-  console.log("API Key 확인:", apiKey ? "있음(OK)" : "없음(Error)");
+  if (!apiKey) return res.status(500).json({ error: "API Key Missing" });
 
-  if (!apiKey) return res.status(500).json({ error: "환경변수 설정 오류" });
-
-  // 🚀 모든 불필요한 설정을 뺀 가장 기초적인 요청 주소
-  const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  // 🚀 [핵심] v1beta가 아닌 v1 주소를 사용합니다.
+  const apiURL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   const promptData = {
     contents: [{
       parts: [{
-        text: `Analyze these 7 dream fragments and output ONLY JSON: ${answers.join(" | ")}. Structure: {"keywords": "A • B • C", "rarity": "0.1%", "report": {"title": "Title", "summary": "Detailed analysis"}}`
+        text: `Analyze these 7 dream fragments and return ONLY a valid JSON.
+        Data: ${answers.join(" | ")}
+        Format: {"keywords": "WORD1 • WORD2 • WORD3", "rarity": "0.7%", "report": {"title": "Title", "summary": "Detailed analysis"}}`
       }]
     }]
   };
@@ -28,19 +27,21 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    console.log("구글 서버 응답 전체:", JSON.stringify(data));
 
     if (data.error) {
+      console.error("Google API Error:", JSON.stringify(data.error));
       return res.status(data.error.code || 500).json({ error: data.error.message });
     }
 
-    // 결과 추출 로직 (안전 장치 강화)
-    const resultText = data.candidates[0].content.parts[0].text;
-    const jsonMatch = resultText.match(/\{[\s\S]*\}/);
-    res.status(200).json(JSON.parse(jsonMatch[0]));
-
+    // AI 대답에서 JSON만 안전하게 추출
+    let text = data.candidates[0].content.parts[0].text;
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      res.status(200).json(JSON.parse(jsonMatch[0]));
+    } else {
+      throw new Error("Invalid AI Response");
+    }
   } catch (error) {
-    console.error("최종 에러 로그:", error.message);
-    res.status(500).json({ error: "분석 실패: " + error.message });
+    res.status(500).json({ error: error.message });
   }
 }
