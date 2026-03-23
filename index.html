@@ -24,38 +24,37 @@
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .neural-node { width: 4px; height: 4px; background: white; border-radius: 50%; position: absolute; filter: blur(1px); animation: pulse 2s infinite alternate; }
         @keyframes pulse { from { opacity: 0.2; transform: scale(1); } to { opacity: 1; transform: scale(1.5); } }
-        .blur-report { filter: blur(25px); opacity: 0.4; transition: all 3s cubic-bezier(0.19, 1, 0.22, 1); pointer-events: none; }
-        .blur-report.unlocked { filter: blur(0px); opacity: 1; pointer-events: auto; }
-        .payment-overlay { transition: all 1.5s ease; }
-        .payment-overlay.hidden { opacity: 0; pointer-events: none; transform: translateY(30px); }
+        
         #payment-success-overlay { position: fixed; inset: 0; background: black; z-index: 200; display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 1s ease; }
         #payment-success-overlay.active { display: flex; opacity: 1; }
         .shatter-icon { font-size: 4rem; color: var(--gold); animation: shatter-pop 1s ease-out; }
         @keyframes shatter-pop { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 50% { transform: scale(1.1) rotate(5deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+        
         #artifact-card-hidden-container { position: fixed; top: -3000px; left: -3000px; z-index: -1000; }
-        .artifact-card-luxury { width: 1080px; height: 1350px; background: #030308; padding: 100px; display: flex; flex-direction: column; justify-content: space-between; border: 15px solid #111; position: relative; }
+        .artifact-card-luxury { width: 1080px; height: 1920px; background: #030308; padding: 100px; display: flex; flex-direction: column; justify-content: space-between; border: 15px solid #111; position: relative; text-align: center; }
         .artifact-card-luxury::before { content:""; position:absolute; inset: 0; border: 2px solid var(--gold); margin: 25px; opacity: 0.6; }
-        .keyword-giant { line-height: 0.8; letter-spacing: -0.05em; background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .keyword-giant { line-height: 1.1; letter-spacing: -0.02em; background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* 📱 [신규] 모바일 레이아웃 미디어 쿼리 */
         @media (max-width: 768px) {
             .nav-item { display: none; }
-            .step-4-layout { flex-direction: column !important; gap: 4rem !important; }
-            .keyword-giant { font-size: 6rem !important; }
-            #report-card-container { height: auto !important; padding: 2rem !important; }
-            #progress { font-size: 8px !important; tracking: 0.4em !important; }
-            h3 { font-size: 1.5rem !important; leading: 1.3 !important; }
-            input { font-size: 1.2rem !important; }
+            .step-4-layout { flex-direction: column !important; gap: 2rem !important; margin-top: 2rem !important;}
+            .keyword-giant { font-size: 3.5rem !important; }
+            #report-card-container { height: 450px !important; padding: 2rem !important; }
             .btn-luxury { px: 12 !important; py: 4 !important; }
         }
 
-        /* 2줄 미리보기 효과 */
         .report-summary-teaser { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; position: relative; }
-        .report-summary-teaser::after { content: ""; position: absolute; bottom: 0; right: 0; width: 60px; height: 24px; background: linear-gradient(to right, transparent, var(--bg)); pointer-events: none; }
+        .report-summary-full-fade { opacity: 0; visibility: hidden; transition: opacity 1s ease-in-out; display: none; }
+        .report-summary-full-fade.show { opacity: 1; visibility: visible; display: block; }
 
-        /* 결제 성공 후 페이드인 애니메이션 */
-        .report-summary-full-fade { opacity: 0; visibility: hidden; transition: opacity 1s ease-in-out, visibility 1s ease-in-out; }
-        .report-summary-full-fade.show { opacity: 1; visibility: visible; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+
+        .payment-overlay { transition: all 1.5s ease; overflow-y: auto; }
+        .payment-overlay.hidden { opacity: 0; pointer-events: none; transform: translateY(30px); }
     </style>
 </head>
 <body>
@@ -68,8 +67,8 @@
         </div>
     </div>
     <nav class="fixed top-0 w-full flex justify-between items-center px-12 py-10 z-50">
-        <div class="text-2xl font-light tracking-[0.5em] serif italic">REMNANT</div>
-        <div class="text-[9px] tracking-[0.5em] opacity-40 uppercase">Beyond The Night</div>
+        <div class="text-2xl font-light tracking-[0.5em] serif italic nav-item">REMNANT</div>
+        <div class="text-[9px] tracking-[0.5em] opacity-40 uppercase nav-item">Beyond The Night</div>
     </nav>
     <section id="step-1" class="step active">
         <div class="space-y-12 mb-20 text-center">
@@ -93,50 +92,55 @@
         </div>
         <p id="loading-text" class="text-[10px] tracking-[0.8em] opacity-50 uppercase italic">Mapping Subconscious Architecture...</p>
     </div>
-    <section id="step-4" class="step px-12">
-        <div class="flex flex-row step-4-layout items-center justify-between w-full max-w-7xl mx-auto gap-16">
-            <div>
+    <section id="step-4" class="step px-8 md:px-12">
+        <div class="flex flex-row step-4-layout items-center justify-between w-full max-w-7xl mx-auto gap-12">
+            <div class="w-full md:w-1/2 max-h-[400px] md:max-h-[600px] overflow-y-auto custom-scroll pr-4">
                 <span id="analyzing-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase hidden">ANALYZING...</span>
-                <h2 id="final-keywords" class="serif text-6xl md:text-[6rem] italic keyword-giant">VOID<br>VELVET<br>ECHO</h2>
-                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-10 py-4 mt-16 opacity-0 pointer-events-none transition-all duration-1000">Share Your Artifact</button>
+                <h2 id="final-keywords" class="serif text-5xl md:text-6xl italic keyword-giant">VOID<br>VELVET<br>ECHO</h2>
+                <button id="save-card-btn" onclick="saveSubconsciousArtifact()" class="btn-luxury px-10 py-4 mt-12 opacity-0 pointer-events-none transition-all duration-1000">Save Instagram Card</button>
             </div>
-            <div id="report-card-container" class="glass p-12 relative overflow-hidden h-[450px] md:h-[600px] flex flex-col rounded-sm">
-                <div id="report-content" class="space-y-12">
-                    <h3 id="report-title" class="serif text-4xl italic">Dossier: Pending</h3>
-                    
-                    <p id="report-summary-teaser" class="report-summary-teaser text-[10px] leading-loose text-white/80 opacity-90 relative"></p>
-                    
-                    <p id="report-summary-full" class="report-summary-full-fade text-[10px] leading-loose opacity-60"></p>
-                    
-                    <div class="h-40 bg-white/5 rounded-sm flex items-center justify-center italic text-[9px] opacity-20 tracking-widest uppercase">Generative Artifact Pending</div>
+            
+            <div id="report-card-container" class="w-full md:w-1/2 glass p-8 md:p-12 relative overflow-hidden h-[500px] md:h-[600px] flex flex-col rounded-sm">
+                <div id="report-content" class="h-full custom-scroll pr-4 pb-20 space-y-8 overflow-hidden">
+                    <h3 id="report-title" class="serif text-3xl md:text-4xl italic text-white/90">Dossier: Pending</h3>
+                    <p id="report-summary-teaser" class="report-summary-teaser text-sm md:text-base font-light leading-relaxed text-white/90"></p>
+                    <p id="report-summary-full" class="report-summary-full-fade text-sm md:text-base font-light leading-relaxed text-white/90"></p>
                 </div>
-                <div id="payment-overlay" class="payment-overlay absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-xl p-12 text-center">
-                    <h4 class="serif text-3xl italic mb-6">Own Your Artifact</h4>
-                    <p class="text-[10px] tracking-widest opacity-60 mb-12 uppercase">Unlock the full Dossier & high-resolution artifact.</p>
-                    <div id="paypal-button-container" class="w-full"></div>
+                
+                <div id="payment-overlay" class="payment-overlay absolute inset-0 bg-black/70 backdrop-blur-xl custom-scroll">
+                    <div class="flex flex-col items-center justify-center min-h-full p-8 text-center py-12">
+                        <h4 class="serif text-3xl italic mb-6">Own Your Artifact</h4>
+                        <p class="text-[10px] tracking-widest opacity-60 mb-12 uppercase">Unlock the full Dossier & enable scroll.</p>
+                        <div id="paypal-button-container" class="w-full"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+    
     <div id="artifact-card-hidden-container">
         <div id="artifact-card-to-capture" class="artifact-card-luxury text-center">
             <div class="space-y-6">
-                <span id="card-rarity" class="text-[20px] tracking-[0.8em] text-indigo-400 font-bold uppercase serif">RARITY: 0.1%</span>
-                <h1 id="card-keywords" class="serif text-[130px] italic keyword-giant">VOID<br>VELVET<br>ECHO</h1>
+                <div class="serif text-[32px] tracking-[0.5em] opacity-60">REMNANT | Discover Your Subconscious</div>
+                <div class="w-full h-0.5 bg-indigo-500/20 my-10 mx-auto"></div>
+                <div id="card-rarity" class="serif text-[20px] tracking-[0.8em] text-indigo-400 font-bold uppercase">RARITY: ANALYSIS INITIATED</div>
             </div>
+            <h1 id="card-keywords" class="serif text-[120px] leading-[0.9] italic keyword-giant mt-[50px]">VOID<br>VELVET<br>ECHO</h1>
             <div class="space-y-6">
                 <p id="card-title" class="serif text-[36px] italic opacity-80 mt-20">The Architecture of Subconscious</p>
                 <div class="w-20 h-0.5 bg-indigo-500 mx-auto"></div>
-                <p class="text-[16px] tracking-[1em] uppercase serif opacity-40 mt-10">REMNANT Studio | Dossier 2026</p>
+                <p class="text-[18px] tracking-[1em] opacity-40 mt-10">REMNANT-STUDIO.VERCEL.APP</p>
             </div>
         </div>
     </div>
+    
     <audio id="success-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
     <script>
         const questions = ["Atmosphere Hue?", "Lingering Emotion?", "Observer or Architect?", "Gravity Condition?", "Focal Object?", "Recognition of Self?", "Dissolution?"];
         let currentStep = 0; let userAnswers = [];
         function nextStep(n) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); setTimeout(() => { const target = document.getElementById('step-' + n); if(target) target.classList.add('active'); }, 100); }
-        function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 12 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 12 ? "auto" : "none"; }
+        function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 10 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 10 ? "auto" : "none"; }
+        
         async function handleQuestion() {
             const input = document.getElementById('answer-input'); userAnswers.push(input.value); currentStep++;
             if(currentStep < questions.length) {
@@ -147,11 +151,11 @@
                 try {
                     const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: userAnswers }) });
                     const data = await res.json();
+                    
                     document.getElementById('final-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
                     document.getElementById('rarity-text').innerText = `RARITY: ${data.rarity}`;
                     document.getElementById('report-title').innerText = `Dossier: ${data.report.title}`;
                     
-                    // 미리보기 및 전체 텍스트 설정
                     document.getElementById('report-summary-teaser').innerText = data.report.summary;
                     document.getElementById('report-summary-full').innerText = data.report.summary;
 
@@ -161,32 +165,39 @@
                     
                     document.getElementById('analyzing-text').classList.add('hidden');
                     
-                    setTimeout(() => nextStep(4), 2000);
+                    setTimeout(() => {
+                        nextStep(4);
+                        // 🚀 [핵심 로직] 결과 화면 진입과 동시에 '인스타 카드 저장' 버튼 활성화!
+                        const saveBtn = document.getElementById('save-card-btn');
+                        saveBtn.style.opacity = "1"; 
+                        saveBtn.style.pointerEvents = "auto";
+                    }, 2000);
                 } catch(e) { console.error(e); nextStep(4); }
             }
         }
 
-        // 결제 성공 시 연출 및 페이드인 애니메이션
         function unlockSubconsciousArtifact() {
             const sound = document.getElementById('success-sound'); if(sound) sound.play().catch(e => {});
+            
             const overlay = document.getElementById('payment-success-overlay'); overlay.classList.add('active');
-            document.getElementById('save-card-btn').style.opacity = "1"; document.getElementById('save-card-btn').style.pointerEvents = "auto";
+            
             setTimeout(() => {
                 overlay.classList.remove('active');
                 document.getElementById('payment-overlay').classList.add('hidden');
                 
-                // 미리보기 숨기고 전체 텍스트 페이드인
                 document.getElementById('report-summary-teaser').classList.add('hidden');
                 document.getElementById('report-summary-full').classList.add('show');
+                document.getElementById('report-content').style.overflowY = 'auto';
             }, 3500);
         }
 
         function saveSubconsciousArtifact() {
             const btn = document.getElementById('save-card-btn'); btn.innerText = "Processing...";
             html2canvas(document.getElementById('artifact-card-to-capture'), { backgroundColor: '#030308', scale: 1 }).then(canvas => {
-                const link = document.createElement('a'); link.download = 'REMNANT_Artifact.png'; link.href = canvas.toDataURL(); link.click(); btn.innerText = "Share Your Artifact";
+                const link = document.createElement('a'); link.download = 'REMNANT_Artifact.png'; link.href = canvas.toDataURL(); link.click(); btn.innerText = "Save Instagram Card";
             });
         }
+        
         window.onload = () => {
             paypal.Buttons({
                 style: { layout: 'vertical', color: 'silver', shape: 'rect', label: 'paypal', tagline: false },
