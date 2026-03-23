@@ -9,16 +9,17 @@
     <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD&locale=en_US"></script>
     <style>
         :root { --bg: #020205; }
-        body { background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+        body { background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; }
         .serif { font-family: 'Cormorant Garamond', serif; }
         
-        /* 🌌 Grainy Noise Overlay */
+        /* 🌌 Premium Grainy Overlay */
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://grainy-gradients.vercel.app/noise.svg');
             opacity: 0.05; pointer-events: none; z-index: 100;
         }
 
+        /* 💜 Midnight Velvet Aurora */
         .aurora {
             position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1;
             background: radial-gradient(circle at 30% 40%, rgba(67, 56, 202, 0.12) 0%, transparent 40%),
@@ -28,82 +29,90 @@
         @keyframes drift { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .glass { background: rgba(255, 255, 255, 0.015); backdrop-filter: blur(50px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .btn-luxury { background: #ffffff; color: #000; letter-spacing: 0.4em; font-size: 0.65rem; font-weight: 500; text-transform: uppercase; transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1); }
+        .btn-luxury { background: #ffffff; color: #000; letter-spacing: 0.4em; font-size: 0.65rem; font-weight: 500; text-transform: uppercase; transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); cursor: pointer; }
         .btn-luxury:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3); }
 
-        .fade-in-up { animation: fadeInUp 2.5s ease forwards; opacity: 0; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* Step Management */
+        .step { display: none; opacity: 0; }
+        .step.active { display: flex; animation: fadeIn 2s forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .hidden-ui { display: none; }
-        .blur-report { filter: blur(12px); pointer-events: none; user-select: none; }
+        /* Result Visuals */
+        .blur-report { filter: blur(15px); pointer-events: none; user-select: none; }
+        .keyword-giant { 
+            line-height: 0.8; 
+            letter-spacing: -0.05em;
+            animation: text-glow 3s infinite alternate;
+        }
+        @keyframes text-glow { from { opacity: 0.5; } to { opacity: 1; text-shadow: 0 0 30px rgba(255,255,255,0.2); } }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center">
+<body class="h-screen w-screen relative">
 
     <div class="aurora"></div>
 
-    <section id="story-section" class="min-h-screen flex flex-col items-center justify-center px-8 text-center max-w-4xl z-10">
+    <nav class="fixed top-0 w-full flex justify-between items-center px-12 py-10 z-50">
+        <div class="text-2xl font-light tracking-[0.5em] serif italic">REMNANT</div>
+        <div class="text-[9px] tracking-[0.4em] opacity-30 font-light">EST. 2026</div>
+    </nav>
+
+    <section id="step-1" class="step active flex-col items-center justify-center h-full px-8 text-center max-w-5xl mx-auto z-10">
         <div class="space-y-12 mb-20">
-            <p class="fade-in-up serif text-2xl md:text-3xl italic font-light opacity-60" style="animation-delay: 0.5s;">
-                "Your dreams are not random fragments of the night."
-            </p>
-            <p class="fade-in-up serif text-2xl md:text-3xl italic font-light opacity-80" style="animation-delay: 2s;">
-                "They are the silent architecture of your subconscious, <br> built with the remnants of your deepest desires and fears."
-            </p>
-            <p class="fade-in-up serif text-2xl md:text-3xl italic font-light" style="animation-delay: 3.5s;">
-                "In the theater of the mind, every shadow has a meaning, <br> every echo has a origin."
-            </p>
+            <h2 class="serif text-3xl md:text-5xl italic font-light leading-tight opacity-90">
+                "Dreams are the discarded architecture of the day, <br>
+                waiting to be reconstructed in the silence of the night."
+            </h2>
+            <p class="text-[10px] tracking-[0.6em] opacity-30 uppercase">A Psychoanalytic Journey into Your Subconscious</p>
         </div>
-        <button onclick="showQuestions()" class="fade-in-up btn-luxury px-16 py-5" style="animation-delay: 5s;">
+        <button onclick="nextStep(2)" class="btn-luxury px-16 py-5">
             Recite Your Dream
         </button>
     </section>
 
-    <section id="question-section" class="hidden-ui min-h-screen flex flex-col items-center justify-center px-8 z-10 w-full max-w-2xl text-center">
-        <span class="text-[9px] tracking-[0.5em] opacity-30 mb-8 uppercase">Step 01 / 05</span>
-        <h2 id="question-text" class="serif text-4xl italic mb-16">What was the dominant hue of the atmosphere?</h2>
-        <textarea id="answer-input" placeholder="Describe the texture and tone..." 
-            class="bg-transparent border-b border-white/10 w-full py-4 text-xl font-extralight italic text-center focus:outline-none focus:border-white transition-all duration-700"></textarea>
-        <button onclick="nextQuestion()" class="btn-luxury px-12 py-4 mt-20">Continue</button>
+    <section id="step-2" class="step flex-col items-center justify-center h-full px-8 z-10 w-full max-w-2xl mx-auto text-center">
+        <span id="progress" class="text-[9px] tracking-[0.5em] opacity-30 mb-8 uppercase font-light">Sequence 01 / 05</span>
+        <h3 id="question-text" class="serif text-4xl italic mb-16 leading-relaxed">What was the dominant hue <br> of the atmosphere?</h3>
+        <input id="answer-input" type="text" placeholder=" Describe the tone..." 
+            class="bg-transparent border-b border-white/10 w-full py-4 text-xl font-extralight italic text-center focus:outline-none focus:border-white transition-all duration-700">
+        <button onclick="handleQuestion()" class="btn-luxury px-12 py-4 mt-20">Continue</button>
     </section>
 
-    <div id="loading-section" class="hidden-ui flex-col items-center justify-center h-screen z-10">
-        <div class="w-24 h-[0.5px] bg-white/20 relative overflow-hidden mb-8">
-            <div class="absolute inset-0 bg-white/60 -translate-x-full animate-[shimmer_2s_infinite]" style="animation: shimmer 2s infinite;"></div>
+    <div id="step-3" class="step flex-col items-center justify-center h-full z-10">
+        <div class="w-32 h-[0.5px] bg-white/10 relative overflow-hidden mb-10">
+            <div class="absolute inset-0 bg-white/60 -translate-x-full" style="animation: shimmer 2.5s infinite;"></div>
         </div>
-        <p class="text-[10px] tracking-[0.6em] opacity-40 uppercase italic">Decoding psychoanalytic patterns...</p>
+        <p class="text-[10px] tracking-[0.6em] opacity-40 uppercase italic">Synthesizing Neural Remnants...</p>
     </div>
 
-    <section id="result-section" class="hidden-ui w-full max-w-6xl px-8 z-10 py-32">
-        <div class="grid md:grid-cols-12 gap-12">
-            <div class="md:col-span-5 space-y-12">
-                <div class="flex flex-wrap gap-4">
-                    <span class="px-6 py-2 border border-white/10 rounded-full text-[10px] tracking-widest opacity-60">VOX</span>
-                    <span class="px-6 py-2 border border-white/10 rounded-full text-[10px] tracking-widest opacity-60">ISOLATION</span>
-                    <span class="px-6 py-2 border border-white/10 rounded-full text-[10px] tracking-widest opacity-60">METAMORPHOSIS</span>
-                </div>
-                <div class="glass aspect-square relative flex items-center justify-center group overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-transparent blur-3xl"></div>
-                    <p class="text-[9px] tracking-[0.5em] opacity-20 italic">ENCODING VISUAL ARTIFACT...</p>
+    <section id="step-4" class="step flex-col items-center justify-center h-full w-full max-w-7xl mx-auto px-12 z-10">
+        <div class="grid md:grid-cols-2 gap-24 items-center w-full">
+            
+            <div class="text-left space-y-12">
+                <div class="space-y-2">
+                    <span class="text-[10px] tracking-[0.5em] opacity-30 uppercase font-medium">Core Archetypes Found</span>
+                    <h2 class="serif text-7xl md:text-[9.5rem] italic keyword-giant">
+                        VOID <br> <span class="opacity-30">VELVET</span> <br> ECHO
+                    </h2>
                 </div>
             </div>
 
-            <div class="md:col-span-7 glass p-12 md:p-20 relative overflow-hidden">
+            <div class="glass p-12 md:p-16 relative overflow-hidden group">
                 <div class="blur-report space-y-8">
-                    <h3 class="serif text-4xl italic">Psychoanalytic Dossier #0822</h3>
-                    <p class="text-sm opacity-30 leading-loose">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                    <p class="text-sm opacity-30 leading-loose">The presence of cold water signifies an ego-dissolution phase, where the subject encounters the raw architecture of the Id...</p>
+                    <h3 class="serif text-4xl italic opacity-80">Psychoanalytic Dossier #0822</h3>
+                    <p class="text-[11px] leading-loose opacity-40">Your dream indicates a profound intellectual displacement. The presence of the void suggests a transition between states of consciousness, where the ego seeks a new structural monolith to ground its reality. The obsidian mirror reflects a fragmented self-perception waiting for unification...</p>
+                    <div class="w-full h-32 bg-white/5 rounded-sm"></div>
                 </div>
 
-                <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm p-12 text-center">
+                <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md p-10 text-center">
                     <div class="mb-8 opacity-40">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                     </div>
-                    <h4 class="serif text-3xl italic mb-6">Full Deep Interpretation Locked</h4>
-                    <p class="text-[10px] tracking-widest opacity-60 mb-10 leading-relaxed uppercase">Unlock the complete psychoanalytic report <br> and your high-res digital artifact.</p>
+                    <h4 class="serif text-3xl italic mb-6">Interpretation Locked</h4>
+                    <p class="text-[10px] tracking-widest opacity-60 mb-12 uppercase leading-loose">Access the full psychoanalytic report <br> and your high-definition visual artifact.</p>
                     
-                    <div id="paypal-button-container" class="w-full max-w-[280px]"></div>
-                    <p class="mt-6 text-[8px] tracking-widest opacity-30 font-light">SECURE ONE-TIME PAYMENT — $1.99</p>
+                    <div id="paypal-button-container" class="w-full max-w-[280px] mx-auto"></div>
+                    <p class="mt-8 text-[8px] tracking-[0.4em] opacity-20 uppercase font-light">Secure One-Time Payment — $1.99</p>
                 </div>
             </div>
         </div>
@@ -111,54 +120,44 @@
 
     <script>
         const questions = [
-            "What was the dominant hue of the atmosphere?",
-            "Which emotion lingered upon awakening?",
-            "Were you an observer or the architect of the sequence?",
-            "What singular object or symbol felt most 'alive'?",
-            "How did the sequence dissolve into reality?"
+            "What was the dominant hue <br> of the atmosphere?",
+            "Which emotion lingered <br> upon awakening?",
+            "Were you an observer <br> or the architect?",
+            "What singular object <br> felt most 'alive'?",
+            "How did the sequence <br> dissolve into reality?"
         ];
         let currentStep = 0;
 
-        function showQuestions() {
-            document.getElementById('story-section').classList.add('hidden-ui');
-            document.getElementById('question-section').classList.remove('hidden-ui');
+        function nextStep(stepNum) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            setTimeout(() => {
+                const target = document.getElementById(`step-${stepNum}`);
+                target.classList.add('active');
+            }, 100);
         }
 
-        function nextQuestion() {
+        function handleQuestion() {
             const input = document.getElementById('answer-input').value;
-            if(!input) return alert("Please recite your memories.");
-            
+            if(!input) return;
+
             currentStep++;
             if(currentStep < questions.length) {
-                document.getElementById('question-text').innerText = questions[currentStep];
+                document.getElementById('question-text').innerHTML = questions[currentStep];
                 document.getElementById('answer-input').value = "";
-                document.querySelector('#question-section span').innerText = `Step 0${currentStep + 1} / 05`;
+                document.getElementById('progress').innerText = `Sequence 0${currentStep + 1} / 05`;
             } else {
-                showLoading();
+                nextStep(3); // Go to loading
+                setTimeout(() => nextStep(4), 5000); // Go to result after 5s
             }
         }
 
-        function showLoading() {
-            document.getElementById('question-section').classList.add('hidden-ui');
-            document.getElementById('loading-section').classList.remove('hidden-ui');
-            document.getElementById('loading-section').classList.add('flex');
-            
-            setTimeout(() => {
-                document.getElementById('loading-section').style.display = 'none';
-                document.getElementById('result-section').classList.remove('hidden-ui');
-                document.getElementById('result-section').classList.add('fade-in-up');
-            }, 5000);
-        }
-
+        // Initialize PayPal
         paypal.Buttons({
             style: { layout: 'vertical', color: 'silver', shape: 'rect', label: 'paypal', tagline: false },
             createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { value: '1.99' } }] }),
-            onApprove: (data, actions) => actions.order.capture().then(details => alert('Report Unlocked for ' + details.payer.name.given_name))
+            onApprove: (data, actions) => actions.order.capture().then(details => alert('Dossier Unlocked'))
         }).render('#paypal-button-container');
     </script>
 
-    <style>
-        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-    </style>
 </body>
 </html>
