@@ -6,136 +6,147 @@
     <title>REMNANT | Architectural Dream Visualization</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Inter:wght@100;200;300;400&display=swap" rel="stylesheet">
     
-    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
-
     <style>
-        :root { --bg: #020205; --accent: #8b5cf6; }
-        body { 
-            background-color: var(--bg); color: #ffffff; 
-            font-family: 'Inter', sans-serif; 
-            -webkit-font-smoothing: antialiased;
-            scroll-behavior: smooth;
+        /* 1.1 Palette & Custom Styling */
+        :root {
+            --bg-base: #020205; /* Pure Midnight Black */
+            --violet-glow: rgba(126, 34, 206, 0.1);
+            --indigo-glow: rgba(67, 56, 202, 0.1);
         }
+
+        body {
+            background-color: var(--bg-base);
+            color: #f8fafc; /* Off-white */
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased; /* Apple-like font smoothness */
+        }
+
         .serif { font-family: 'Cormorant Garamond', serif; }
-        
-        /* 🌌 Grainy Noise Overlay (The Premium Touch) */
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://grainy-gradients.vercel.app/noise.svg');
-            opacity: 0.05; pointer-events: none; z-index: 100;
-        }
 
-        /* 💜 Midnight Velvet Aurora Animation */
+        /* 2. Background Aurora - Slow, blurring gradients */
         .aurora {
-            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1;
-            background: radial-gradient(circle at 20% 30%, rgba(67, 56, 202, 0.12) 0%, transparent 40%),
-                        radial-gradient(circle at 80% 70%, rgba(124, 58, 237, 0.1) 0%, transparent 40%);
-            filter: blur(100px); animation: drift 50s infinite linear;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 30%, var(--violet-glow) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, var(--indigo-glow) 0%, transparent 40%);
+            filter: blur(80px); /* Deep blur */
+            animation: drift 25s infinite alternate ease-in-out;
         }
-        @keyframes drift { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* 💎 Luxury Glassmorphism & UI Elements */
-        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(50px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .input-minimal {
-            background: transparent; border-bottom: 0.5px solid rgba(255, 255, 255, 0.15);
-            transition: all 1s ease;
+        @keyframes drift {
+            from { transform: scale(1) translate(0, 0); }
+            to { transform: scale(1.2) translate(5%, 5%); }
         }
-        .input-minimal:focus { outline: none; border-color: white; padding-bottom: 1.5rem; }
+
+        /* 3. Luxury Glassmorphism & Input Styling */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.015);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.5s ease;
+        }
+
+        .input-underline {
+            background: transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            transition: border-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .input-underline:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+        }
 
         .btn-luxury {
-            background: #ffffff; color: #000;
-            letter-spacing: 0.4em; font-size: 0.65rem; font-weight: 500; text-transform: uppercase;
-            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            letter-spacing: 0.3em; /* Wide tracking */
+            font-size: 0.7rem;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
-        .btn-luxury:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3); }
 
-        /* Section Handling */
-        .hidden-ui { display: none; opacity: 0; }
-        .fade-in { display: block; animation: fadeIn 2s forwards; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .btn-luxury:hover {
+            background: #f8fafc;
+            color: #020205;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center">
+<body class="flex flex-col items-center min-h-screen">
 
     <div class="aurora"></div>
 
-    <nav class="w-full flex justify-between items-center px-12 py-10 z-10">
-        <div class="text-2xl font-light tracking-[0.5em] serif italic">REMNANT</div>
-        <div class="flex gap-12 text-[9px] tracking-[0.4em] opacity-30 font-light">
-            <a href="#archive" class="hover:opacity-100 transition">ARCHIVE</a>
-            <a href="#membership" class="hover:opacity-100 transition border-b border-white/20 pb-1 text-white opacity-80">MEMBERSHIP</a>
+    <nav class="w-full max-w-7xl px-12 py-10 flex justify-between items-center z-10">
+        <div class="text-2xl tracking-[0.4em] font-extralight serif italic">REMNANT</div>
+        <div class="hidden md:flex gap-16 text-[10px] tracking-[0.3em] opacity-40 font-light">
+            <a href="#" class="hover:opacity-100 transition duration-500">MANIFESTO</a>
+            <a href="#" class="hover:opacity-100 transition duration-500">ARCHIVE</a>
+            <a href="#" class="hover:opacity-100 transition duration-500">JOURNAL</a>
         </div>
     </nav>
 
-    <main id="hero-section" class="w-full max-w-5xl px-8 mt-32 z-10 text-center">
-        <h1 class="serif text-6xl md:text-[8rem] leading-[0.9] italic font-light tracking-tighter mb-20">
-            Visualize the <br>
-            <span class="opacity-40 text-4xl md:text-7xl block mt-4 font-extralight tracking-normal">Architecture of Dreams</span>
+    <main class="flex-1 flex flex-col items-center justify-center px-6 w-full max-w-5xl text-center z-10">
+        
+        <h1 class="serif text-6xl md:text-9xl mb-24 italic font-light leading-tight tracking-tight">
+            Visualize the Architecture <br>
+            <span class="opacity-60 text-4xl md:text-7xl block mt-4 font-extralight tracking-normal">of Your Subconscious</span>
         </h1>
-        <div class="max-w-xl mx-auto space-y-16">
-            <input id="dreamInput" type="text" placeholder="Recite the fragments of your memory..." 
-                class="input-minimal w-full py-4 text-xl font-extralight text-center italic placeholder:opacity-20">
-            <button onclick="startAnalysis()" class="btn-luxury px-16 py-5">
+
+        <div class="w-full max-w-2xl space-y-20 mb-36">
+            <div class="relative group">
+                <input 
+                    type="text" 
+                    placeholder="Recite the fragments of your memory..." 
+                    class="input-underline w-full py-6 text-xl font-extralight text-center italic placeholder:opacity-20"
+                >
+            </div>
+            
+            <button class="btn-luxury px-16 py-5 border border-white/10 text-white uppercase">
                 Analyze Sequence
             </button>
         </div>
+
+        <div class="glass-card w-full p-16 md:p-24 text-left mb-40 relative group">
+            <div class="flex justify-between items-start mb-16 border-b border-white/5 pb-8">
+                <span class="text-[9px] tracking-[0.4em] opacity-30 uppercase">Sequence No. 0822</span>
+                <span class="text-[9px] tracking-[0.4em] opacity-30">MARCH 23, 2026</span>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-20 items-center">
+                <div class="space-y-8">
+                    <h3 class="serif text-4xl italic font-light tracking-wide text-violet-100/90">Ethereal Displacement</h3>
+                    <p class="text-sm leading-[2] font-extralight opacity-50 tracking-wider">
+                        Your subconscious is navigating a phase of 'Liquid Transition'. 
+                        The recurring imagery of vast, empty corridors suggests an intellectual 
+                        yearning for space beyond the current constraints of your reality.
+                    </p>
+                    <div class="pt-6">
+                        <button class="text-[9px] tracking-[0.3em] opacity-40 hover:opacity-100 transition border-b border-white/10 pb-1">EXPORT VISUALIZATION</button>
+                    </div>
+                </div>
+                
+                <div class="relative aspect-square flex items-center justify-center overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-violet-600/10 via-transparent to-indigo-600/10 rounded-full blur-3xl opacity-50"></div>
+                    <div class="w-full h-full border border-white/5 relative flex items-center justify-center">
+                        <div class="absolute w-64 h-64 border border-white/5 rounded-full scale-110"></div>
+                        <div class="w-48 h-48 border border-white/10 rounded-full scale-125"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <div id="loading-section" class="hidden-ui flex-col items-center justify-center h-96 mt-20 z-10">
-        <div class="w-24 h-[0.5px] bg-white/20 relative overflow-hidden mb-8">
-            <div class="absolute inset-0 bg-white/60 -translate-x-full" style="animation: shimmer 2s infinite;"></div>
+    <footer class="w-full py-16 px-12 flex justify-between items-center border-t border-white/5 z-10">
+        <p class="text-[8px] tracking-[0.5em] opacity-20 uppercase">© 2026 REMNANT Studio. Based in the Void.</p>
+        <div class="flex gap-10 text-[8px] tracking-[0.3em] opacity-20">
+            <a href="#" class="hover:text-white transition">INSTAGRAM</a>
+            <a href="#" class="hover:text-white transition">TWITTER</a>
         </div>
-        <p id="loadingText" class="text-[10px] tracking-[0.6em] opacity-40 uppercase italic">Isolating neural echoes...</p>
-    </div>
+    </footer>
 
-    <section id="result-section" class="hidden-ui w-full max-w-6xl px-8 z-10 py-32">
-        <div class="glass p-12 md:p-24 grid md:grid-cols-2 gap-24 items-center">
-            
-            <div class="space-y-10">
-                <div>
-                    <span class="text-[9px] tracking-[0.4em] opacity-30 uppercase block mb-6">Sequence ID: #0822-R</span>
-                    <h2 class="serif text-5xl italic font-light mb-8">The Obsidian Monolith</h2>
-                    <p class="text-sm font-extralight opacity-50 leading-[2.3] tracking-wide">
-                        Your subconscious reveals a state of 'Linear Displacement'. The cold, sharp geometry in your dream suggests an intellectual yearning for structural clarity amidst emotional fluidity.
-                    </p>
-                </div>
-                <div class="pt-6 border-t border-white/5 flex gap-4 text-[9px] tracking-widest opacity-30 uppercase">
-                    <span>Transition</span><span>•</span><span>Void</span><span>•</span><span>Sovereignty</span>
-                </div>
-            </div>
-
-            <div class="relative aspect-square flex flex-col items-center justify-center border border-white/10 bg-black/40 overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-br from-violet-900/20 via-transparent to-indigo-900/20 blur-3xl"></div>
-                
-                <div id="payment-box" class="relative z-10 text-center space-y-8 p-10">
-                    <div class="opacity-20 mb-4">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    </div>
-                    <h3 class="serif text-2xl italic opacity-90">Visual Artifact Locked</h3>
-                    <p class="text-[10px] tracking-[0.3em] opacity-30 mb-10 uppercase">Claim your unique visual for $1.99</p>
-                    
-                    <div id="paypal-button-container" class="max-w-[280px] mx-auto"></div>
-                </div>
-
-                <div id="success-msg" class="hidden relative z-10 flex flex-col items-center animate-pulse">
-                    <div class="text-violet-400 mb-6 tracking-widest text-[10px]">✓ TRANSACTION COMPLETE</div>
-                    <button class="btn-luxury px-10 py-4">Download 8K Visual</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="membership" class="w-full max-w-7xl px-12 py-60 z-10 border-t border-white/5">
-        <div class="grid md:grid-cols-2 gap-24 items-center">
-            <div class="space-y-12">
-                <span class="text-[10px] tracking-[0.5em] text-violet-400 font-medium uppercase">Access the Sovereign Tier</span>
-                <h2 class="serif text-6xl italic font-light leading-tight">Your Subconscious, <br> <span class="opacity-40">Architecturally Mapped.</span></h2>
-                <p class="text-sm font-extralight opacity-50 leading-loose max-w-md italic">
-                    Unlock monthly deep-dive reports. We synthesize your dream sequences into a comprehensive 'Subconscious Map', identifying recurring archetypes and neural patterns.
-                </p>
-                <div class="pt-8 flex flex-col md:flex-row gap-8">
-                    <button class="btn-luxury px-16 py-5">Subscribe — $29 / month</button>
-                    <button
+</body>
+</html>
