@@ -1,4 +1,4 @@
-// api/analyze.js - REMNANT FINAL SUCCESS VERSION
+// api/analyze.js - REMNANT FINAL STABLE VERSION
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
   
@@ -7,29 +7,17 @@ export default async function handler(req, res) {
 
   if (!apiKey) return res.status(500).json({ error: "API Key Missing" });
 
-  // 🚀 v1beta 주소와 gemini-1.5-flash 모델 사용
-  const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  // 🚀 [해결 포인트] 주소를 v1beta에서 v1으로 변경하여 안정성 확보
+  const apiURL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   const promptData = {
     contents: [{
       parts: [{
-        text: `당신은 세계 최고의 정신분석학자입니다. 다음 꿈 답변을 분석하여 오직 JSON 형식으로만 응답하세요.
-        데이터: ${answers.join(" | ")}
-        출력 형식:
-        {
-          "keywords": "WORD1 • WORD2 • WORD3",
-          "rarity": "0.8%",
-          "report": {
-            "title": "분석 제목",
-            "summary": "내용 요약"
-          }
-        }`
+        text: `You are a world-class psychoanalyst. Analyze these 7 dream fragments and return ONLY a valid JSON.
+        Data: ${answers.join(" | ")}
+        Format: {"keywords": "WORD1 • WORD2 • WORD3", "rarity": "0.7%", "report": {"title": "Title", "summary": "Summary"}}`
       }]
-    }],
-    generationConfig: {
-      // 🚀 여기가 핵심입니다! responseMimeType (카멜케이스)으로 수정 완료
-      responseMimeType: "application/json"
-    }
+    }]
   };
 
   try {
@@ -42,17 +30,21 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (data.error) {
-      console.error("Google AI API Error:", JSON.stringify(data.error));
+      console.error("Google API Final Error:", JSON.stringify(data.error));
       return res.status(data.error.code || 500).json({ error: data.error.message });
     }
 
-    // AI 대답 추출 (JSON 외의 불필요한 마크다운 제거)
+    // AI 대답 추출 및 정제 (JSON만 골라내기)
     let text = data.candidates[0].content.parts[0].text;
-    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    
-    res.status(200).json(JSON.parse(text));
+    const jsonMatch = text.match(/\{[\s\S]*\}/); // JSON 형태만 추출하는 정규식
+    if (jsonMatch) {
+      res.status(200).json(JSON.parse(jsonMatch[0]));
+    } else {
+      throw new Error("Invalid AI Response Format");
+    }
+
   } catch (error) {
-    console.error("Internal Server Error:", error.message);
-    res.status(500).json({ error: "서버 내부 오류: " + error.message });
+    console.error("Critical Server Error:", error.message);
+    res.status(500).json({ error: "분석 서버 오류가 발생했습니다." });
   }
 }
