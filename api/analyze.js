@@ -1,4 +1,4 @@
-// api/analyze.js - REMNANT MODEL AUTODETECT VERSION
+// api/analyze.js - REMNANT FINAL (Bypass Blocked Models)
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
   const { answers } = req.body;
@@ -6,29 +6,45 @@ export default async function handler(req, res) {
 
   if (!apiKey) return res.status(500).json({ error: "API Key Missing" });
 
-  // 🚀 1. 이 키가 쓸 수 있는 모델 리스트를 먼저 가져옵니다.
   const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
   
   try {
     const listRes = await fetch(listUrl);
     const listData = await listRes.json();
     
-    // 쓸 수 있는 모델 중 'flash'가 들어간 가장 최신 모델을 찾습니다.
-    const availableModels = listData.models || [];
-    const bestModel = availableModels.find(m => m.name.includes('gemini-1.5-flash') || m.name.includes('gemini-2.0-flash'))?.name 
-                      || "models/gemini-1.5-flash-latest"; // 못 찾으면 최신판으로 강제 지정
+    // 🚀 [해결 포인트] 구글이 막아둔 2.0 모델은 블랙리스트 처리하고, 접근 가능한 모델만 추려냅니다.
+    const validModels = listData.models.filter(m => 
+      m.supportedGenerationMethods?.includes("generateContent") && 
+      !m.name.includes("gemini-2.0-flash") // 🚨 범인 강제 제외!
+    );
 
-    console.log("Selected Model:", bestModel);
+    // 사용 가능한 모델 중 flash -> pro 순으로 가장 적합한 것을 찾습니다.
+    const bestModel = validModels.find(m => m.name.includes("flash"))?.name 
+                   || validModels.find(m => m.name.includes("pro"))?.name 
+                   || validModels[0]?.name;
 
-    // 🚀 2. 찾은 모델 주소로 분석 요청을 보냅니다.
+    console.log("최종 선택된 안전한 모델:", bestModel);
+
+    if (!bestModel) throw new Error("현재 API 키로 사용할 수 있는 텍스트 분석 모델이 없습니다.");
+
+    // 안전하게 찾은 모델 주소로 요청을 보냅니다.
     const apiURL = `https://generativelanguage.googleapis.com/v1beta/${bestModel}:generateContent?key=${apiKey}`;
 
     const promptData = {
       contents: [{
         parts: [{
-          text: `You are a psychoanalyst. Analyze these dream fragments and return ONLY a valid JSON.
+          text: `You are a world-class psychoanalyst. Analyze these 7 dream fragments and return ONLY a valid JSON.
           Data: ${answers.join(" | ")}
-          Format: {"keywords": "A • B • C", "rarity": "0.1%", "report": {"title": "Title", "summary": "Detailed analysis"}}`
+          
+          Required JSON Format:
+          {
+            "keywords": "WORD1 • WORD2 • WORD3",
+            "rarity": "0.1%",
+            "report": {
+              "title": "A profound, philosophical title",
+              "summary": "Deep, professional psychoanalytic report."
+            }
+          }`
         }]
       }]
     };
@@ -44,10 +60,15 @@ export default async function handler(req, res) {
 
     const resultText = data.candidates[0].content.parts[0].text;
     const jsonMatch = resultText.match(/\{[\s\S]*\}/);
-    res.status(200).json(JSON.parse(jsonMatch[0]));
+    
+    if (jsonMatch) {
+      res.status(200).json(JSON.parse(jsonMatch[0]));
+    } else {
+      throw new Error("AI가 JSON 형식을 지키지 않았습니다.");
+    }
 
   } catch (error) {
-    console.error("Critical Error:", error.message);
+    console.error("서버 에러 감지:", error.message);
     res.status(500).json({ error: "분석 불가: " + error.message });
   }
 }
