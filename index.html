@@ -79,24 +79,43 @@
         function nextStep(n) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); setTimeout(() => document.getElementById(`step-${n}`).classList.add('active'), 100); }
         function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); const hint = document.getElementById('length-hint'); if(val.length >= 12) { btn.style.opacity = "1"; btn.style.pointerEvents = "auto"; hint.style.opacity = "0"; } else { btn.style.opacity = "0.2"; btn.style.pointerEvents = "none"; hint.style.opacity = "0.3"; } }
         async function handleQuestion() {
-            userAnswers.push(document.getElementById('answer-input').value);
+            const input = document.getElementById('answer-input').value;
+            userAnswers.push(input);
+
             currentStep++;
             if(currentStep < questions.length) {
                 document.getElementById('question-text').innerHTML = questions[currentStep];
                 document.getElementById('answer-input').value = "";
                 document.getElementById('progress').innerText = `Inquiry 0${currentStep + 1} / 07`;
+                const root = document.documentElement;
+                root.style.setProperty('--c1', colors[currentStep].c1);
+                root.style.setProperty('--c2', colors[currentStep].c2);
                 checkLength();
             } else {
-                nextStep(3);
+                nextStep(3); // 로딩 시작
                 try {
-                    const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: userAnswers }) });
+                    const res = await fetch('/api/analyze', { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify({ answers: userAnswers }) 
+                    });
+                    
+                    if (!res.ok) throw new Error('AI 통신 실패');
+                    
                     const data = await res.json();
+                    
+                    // UI에 AI 결과값 입히기
                     document.getElementById('final-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
                     document.getElementById('rarity-text').innerText = `RARITY: ${data.rarity} - COSMIC SYMBOLISM`;
                     document.getElementById('report-title').innerText = `Dossier: ${data.report.title}`;
                     document.getElementById('report-summary').innerText = data.report.summary;
-                    nextStep(4);
-                } catch(e) { nextStep(4); }
+                    
+                    nextStep(4); // 성공했을 때만 결과 화면으로 이동
+                } catch (e) {
+                    console.error(e);
+                    alert("The void is unresponsive. (API 키나 서버 설정을 확인해주세요)");
+                    nextStep(1); // 실패하면 처음으로 이동
+                }
             }
         }
         paypal.Buttons({ style: { layout: 'vertical', color: 'silver', shape: 'rect', label: 'paypal', tagline: false }, createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { value: '1.99' } }] }) }).render('#paypal-button-container');
