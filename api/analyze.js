@@ -1,39 +1,40 @@
-// api/analyze.js (제미나이 버전)
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-
-// 1. 제미나이 열쇠 설정 (Vercel 환경 변수에서 가져옴)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
+// REMNANT AI 분석 엔진 (제미나이 3 Flash 버전)
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
-  
   const { answers } = req.body;
-  const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
-    generationConfig: { responseMimeType: "application/json" } // JSON 출력 강제
-  });
+  const apiKey = process.env.GEMINI_API_KEY;
 
-  const prompt = `
-    당신은 세계 최고의 정신분석학자입니다. 
-    다음 7가지 답변을 분석하여 럭셔리한 꿈 분석 데이터를 JSON으로 출력하세요.
-    응답 형식:
-    {
-      "keywords": "대문자 영문 키워드 3개 (예: VOID • VELVET • ECHO)",
-      "rarity": "0.1% 단위의 희귀도",
-      "report": {
-        "title": "지적인 제목",
-        "summary": "품격 있는 분석 요약"
-      }
-    }
-    분석할 데이터: ${answers.join(" | ")}
-  `;
+  // AI에게 보낼 지침 (12페이지 리포트 분량의 데이터를 요구함)
+  const prompt = {
+    contents: [{
+      parts: [{
+        text: `당신은 세계 최고의 라캉주의 정신분석학자입니다. 7가지 꿈 답변을 분석하여 럭셔리한 JSON 데이터를 출력하세요. 
+        분석 데이터: ${answers.join(" | ")}
+        출력 형식:
+        {
+          "keywords": "대문자 영문 키워드 3개 (예: VOID • VELVET • ECHO)",
+          "rarity": "0.1% 단위의 희귀도",
+          "report": {
+            "title": "지적인 제목",
+            "summary": "12페이지 분량의 심층 리포트를 요약한 전문적인 서술",
+            "analysis": "구조적 무의식 분석 내용",
+            "future": "미래의 심리적 변화 예측"
+          }
+        }`
+      }]
+    }]
+  };
 
   try {
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    res.status(200).json(JSON.parse(response.text()));
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(prompt)
+    });
+    const data = await response.json();
+    const result = JSON.parse(data.candidates[0].content.parts[0].text);
+    res.status(200).json(result);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Gemini Analysis Failed" });
+    res.status(500).json({ error: "AI 분석 실패" });
   }
 }
