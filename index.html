@@ -11,31 +11,21 @@
         :root { --bg: #030308; --c1: rgba(99, 102, 241, 0.25); --c2: rgba(236, 72, 153, 0.2); }
         body { background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; }
         .serif { font-family: 'Cormorant Garamond', serif; }
-        
-        /* 배경 효과 */
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://grainy-gradients.vercel.app/noise.svg'); opacity: 0.07; z-index: 100; pointer-events: none; }
         .aurora { position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1; background: radial-gradient(circle at 20% 30%, var(--c1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, var(--c2) 0%, transparent 50%); filter: blur(80px); transition: all 4s ease; animation: drift 40s infinite alternate linear; }
         @keyframes drift { from { transform: rotate(0deg) scale(1); } to { transform: rotate(10deg) scale(1.1); } }
-
-        /* UI 요소 */
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .btn-luxury { background: #ffffff; color: #000; letter-spacing: 0.4em; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); cursor: pointer; }
         .btn-luxury:hover { transform: translateY(-3px); box-shadow: 0 20px 50px rgba(255, 255, 255, 0.3); }
-        
         .step { display: none; opacity: 0; }
         .step.active { display: flex; animation: fadeIn 2s forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 로딩 애니메이션 (Neural Mapping) */
         .neural-node { width: 4px; height: 4px; background: white; border-radius: 50%; position: absolute; filter: blur(1px); animation: pulse 2s infinite alternate; }
         @keyframes pulse { from { opacity: 0.2; transform: scale(1); } to { opacity: 1; transform: scale(1.5); } }
-        
-        /* 결과 화면 특수 효과 */
         .blur-report { filter: blur(25px); opacity: 0.4; transition: all 3s cubic-bezier(0.19, 1, 0.22, 1); pointer-events: none; }
         .blur-report.unlocked { filter: blur(0px); opacity: 1; pointer-events: auto; }
         .payment-overlay { transition: all 1.5s ease; }
         .payment-overlay.hidden { opacity: 0; pointer-events: none; transform: translateY(30px); }
-
         .keyword-giant { line-height: 0.8; letter-spacing: -0.05em; background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: text-pulse 4s infinite alternate; }
         @keyframes text-pulse { from { opacity: 0.6; filter: brightness(1); } to { opacity: 1; filter: brightness(1.3); } }
     </style>
@@ -51,7 +41,7 @@
     <section id="step-1" class="step active flex-col items-center justify-center h-full text-center z-10">
         <div class="space-y-12 mb-20">
             <p class="serif text-2xl italic font-light opacity-40">"The dream is the royal road..."</p>
-            <h2 class="serif text-5xl md:text-7xl italic font-light">Cathedral of <span class="text-indigo-300">Symbols.</span></h2>
+            <h2 class="serif text-5xl md:text-7xl italic font-light leading-[1.1]">Cathedral of <span class="text-indigo-300">Symbols.</span></h2>
         </div>
         <button onclick="nextStep(2)" class="btn-luxury px-20 py-6">Recite Your Dream</button>
     </section>
@@ -59,7 +49,7 @@
     <section id="step-2" class="step flex-col items-center justify-center h-full px-8 z-10 w-full max-w-3xl mx-auto text-center">
         <span id="progress" class="text-[9px] tracking-[0.6em] text-indigo-400 mb-10 uppercase font-bold">Inquiry 01 / 07</span>
         <h3 id="question-text" class="serif text-4xl md:text-5xl italic mb-20 leading-snug">What was the dominant hue <br> of the atmosphere?</h3>
-        <input id="answer-input" type="text" oninput="checkLength()" placeholder="Recite the textures..." class="bg-transparent border-b border-white/10 w-full py-6 text-2xl font-extralight italic text-center focus:outline-none focus:border-indigo-500 transition-all duration-1000">
+        <input id="answer-input" type="text" oninput="checkLength()" placeholder="Recite the fragments..." class="bg-transparent border-b border-white/10 w-full py-6 text-2xl font-extralight italic text-center focus:outline-none focus:border-indigo-500 transition-all duration-1000">
         <button id="next-btn" onclick="handleQuestion()" class="btn-luxury px-14 py-5 mt-24 opacity-20 pointer-events-none">Continue Sequence</button>
     </section>
 
@@ -68,7 +58,7 @@
             <div class="neural-node" style="top:20%; left:30%; animation-delay: 0.2s;"></div>
             <div class="neural-node" style="top:50%; left:80%; animation-delay: 0.5s;"></div>
             <div class="neural-node" style="top:70%; left:20%; animation-delay: 0.8s;"></div>
-            <div class="absolute inset-0 border border-white/5 rounded-full animate-spin-slow" style="animation: spin 10s linear infinite;"></div>
+            <div class="absolute inset-0 border border-white/5 rounded-full" style="animation: spin 10s linear infinite;"></div>
         </div>
         <p id="loading-text" class="text-[10px] tracking-[0.8em] opacity-50 uppercase italic">Mapping Subconscious Architecture...</p>
     </div>
@@ -76,21 +66,21 @@
     <section id="step-4" class="step flex-col items-center justify-center h-full w-full max-w-7xl mx-auto px-12 z-10">
         <div class="grid md:grid-cols-2 gap-24 items-center w-full">
             <div>
-                <span id="rarity-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase">RARITY: 0.8%</span>
-                <h2 id="final-keywords" class="serif text-8xl md:text-[9rem] italic keyword-giant">VOID<br>VELVET<br>ECHO</h2>
+                <span id="rarity-text" class="text-[11px] tracking-[0.6em] text-indigo-400 font-bold uppercase">ANALYZING...</span>
+                <h2 id="final-keywords" class="serif text-8xl md:text-[9rem] italic keyword-giant">--<br>--<br>--</h2>
             </div>
 
             <div class="glass p-12 relative overflow-hidden h-[600px] flex flex-col rounded-sm">
                 <div id="report-content" class="blur-report space-y-12">
-                    <h3 id="report-title" class="serif text-4xl italic">Dossier: #RMNT-2026</h3>
-                    <p id="report-summary" class="text-[11px] leading-loose">The architecture of your sequence suggests a profound 'Ego-Displacement'...</p>
+                    <h3 id="report-title" class="serif text-4xl italic">Dossier: Pending</h3>
+                    <p id="report-summary" class="text-[11px] leading-loose">Awaiting subconscious artifacts...</p>
                     <div class="h-48 bg-white/5 rounded-sm flex items-center justify-center italic text-[10px] opacity-20 tracking-widest uppercase">Generative Artifact Pending</div>
                 </div>
 
                 <div id="payment-overlay" class="payment-overlay absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-xl p-12 text-center">
                     <h4 class="serif text-3xl italic mb-6">Own Your Artifact</h4>
                     <p class="text-[10px] tracking-widest opacity-60 mb-12 uppercase">Unlock the full 12-page Dossier <br> & high-resolution generative artifact.</p>
-                    <div id="paypal-button-container" class="w-full"></div>
+                    <div id="paypal-button-container" class="w-full max-w-[300px]"></div>
                 </div>
             </div>
         </div>
@@ -99,10 +89,10 @@
     <script>
         const questions = ["What was the dominant hue of the atmosphere?", "Which emotion lingered upon awakening?", "Were you an observer or the architect?", "Was the gravity of the space heavy or absent?", "What singular object felt most alive?", "Did you recognize yourself in the sequence?", "How did the dream dissolve into reality?"];
         let currentStep = 0; let userAnswers = [];
-
         function nextStep(n) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); setTimeout(() => document.getElementById(`step-${n}`).classList.add('active'), 100); }
         function checkLength() { const val = document.getElementById('answer-input').value; const btn = document.getElementById('next-btn'); btn.style.opacity = val.length >= 12 ? "1" : "0.2"; btn.style.pointerEvents = val.length >= 12 ? "auto" : "none"; }
 
+        // 🛠️ 보강된 질문 처리 로직
         async function handleQuestion() {
             userAnswers.push(document.getElementById('answer-input').value);
             currentStep++;
@@ -112,28 +102,35 @@
                 document.getElementById('progress').innerText = `Inquiry 0${currentStep + 1} / 07`;
                 checkLength();
             } else {
-                nextStep(3);
-                // 로딩 멘트 순차 변화 (분석 느낌 극대화)
+                nextStep(3); // 로딩 시작
                 const loadingTexts = ["Isolating Archetypes...", "Calculating Neural Resonance...", "Finalizing Synthesis..."];
-                let i = 0;
-                const interval = setInterval(() => { 
-                    if(i < loadingTexts.length) document.getElementById('loading-text').innerText = loadingTexts[i++];
-                }, 1500);
+                let i = 0; const interval = setInterval(() => { if(i < loadingTexts.length) document.getElementById('loading-text').innerText = loadingTexts[i++]; }, 1500);
 
                 try {
                     const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: userAnswers }) });
+                    
+                    // 🚀 여기에 '실패 시 catch로 던지기' 로직 추가 완료
+                    if (!res.ok) throw new Error("AI 통신 실패");
+                    
                     const data = await res.json();
+                    
+                    // 🔓 데이터 입히기
                     document.getElementById('final-keywords').innerHTML = data.keywords.replace(/ • /g, "<br>");
                     document.getElementById('rarity-text').innerText = `RARITY: ${data.rarity} - COSMIC SYMBOLISM`;
                     document.getElementById('report-title').innerText = `Dossier: ${data.report.title}`;
                     document.getElementById('report-summary').innerText = data.report.summary;
+                    
                     clearInterval(interval);
-                    setTimeout(() => nextStep(4), 1000);
-                } catch(e) { nextStep(4); }
+                    setTimeout(() => nextStep(4), 1000); // 🚀 성공했을 때만 이동!
+                } catch(e) { 
+                    clearInterval(interval);
+                    // 🚨 실패하면 결과 화면 안 가고 알림창 띄우기
+                    alert("The void is unresponsive. (Please check API Key or try again later)");
+                    nextStep(1); 
+                }
             }
         }
 
-        // 🔓 결제 성공 시 잠금 해제 로직
         function unlockReport() {
             document.getElementById('payment-overlay').classList.add('hidden');
             document.getElementById('report-content').classList.add('unlocked');
